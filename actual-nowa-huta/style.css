@@ -1,0 +1,15 @@
+.card-group {
+    margin: 2%;
+    text-align: center;
+    items-align: center;
+    /* cursor: pointer; */
+    height: 50px;
+}
+
+.card {
+    margin: 1%;
+}
+
+.container {
+    margin: 5px;
+}
