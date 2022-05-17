@@ -1,18 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Vector Layer Hit Detection</title>
-    <style>
-      .map {
-        width: 100%;
-        height:400px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="map" class="map"></div>
-    <div id="info">&nbsp;</div>
-    <script type="module" src="./script.js"></script>
-  </body>
-</html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="script.js"></script>
+        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> -->
+    </head>
+    
+    <body>
+        <div class="bg-image"
+        style="
+          display: grid;
+          grid-template-columns: auto auto auto auto;
+          background-image: url('/maps/map--1920.png');
+          max-width:100%;  
+          max-height:100%;
+          height: 100vh;
+        ">
+          <div class="puzzle piece1" onclick="playSound(1)">Dźwięk Michała</div>
+          <div class="puzzle piece2" onclick="playSound(2)">Dźwięk Maćka</div>
+          <div class="puzzle piece3" onclick="playSound(3)">3</div>
+          <div class="puzzle piece4" onclick="playSound(4)">4</div>
+          <div class="puzzle piece5" onclick="playSound(5)">5</div>
+          <div class="puzzle piece6" onclick="playSound(6)">6</div>
+          <div class="puzzle piece7" onclick="playSound(7)">7</div>
+          <div class="puzzle piece8" onclick="playSound(8)">Inny dźwięk z bardziej długą nazwą trochę taką naprawde</div>
+        </div>
+    </body>
+</html> 

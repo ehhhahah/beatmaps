@@ -1,1 +1,36 @@
-/* #map { height: 180px; } */
+.card-group {
+    margin: 2%;
+    text-align: center;
+    /* cursor: pointer; */
+    height: 50px;
+}
+
+.card {
+    margin: 1%;
+}
+
+.container-background {
+    margin: 5px;
+    background-image:url(/maps/map.png);
+}
+
+.puzzle {
+    background-color: black;
+    color: white;
+    text-align: center;
+    text-justify: auto;
+    opacity: 10%;
+    width:300px;
+    height:300px;
+    cursor: pointer;
+ }
+
+.puzzle:hover {
+    opacity: 50%;
+    background-color: red;
+}
+
+.piece-active {
+    opacity: 30%;
+    background-color: red;
+}

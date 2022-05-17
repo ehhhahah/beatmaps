@@ -1,90 +1,39 @@
-import GeoJSON from './node_modules/ol/format/GeoJSON';
-import Map from './node_modules/ol/Map';
-import VectorLayer from './node_modules/ol/layer/Vector';
-import VectorSource from './node_modules/ol/source/Vector';
-import View from './node_modules/ol/View';
-import {Fill, Stroke, Style} from './node_modules/ol/style';
+var ALL_AUDIOS = new Array(2)
 
-const style = new Style({
-  fill: new Fill({
-    color: '#eeeeee',
-  }),
-});
+function hideShowClassElement(className) {
+    let currState = document.getElementsByClassName(`piece${className}`)[0].classList.toggle(`piece-active`);
+    const elements  = document.getElementsByClassName(className);
 
-const vectorLayer = new VectorLayer({
-  background: '#1a2b39',
-  source: new VectorSource({
-    url: 'https://openlayers.org/data/vector/ecoregions.json',
-    format: new GeoJSON(),
-  }),
-  style: function (feature) {
-    const color = feature.get('COLOR_NNH') || '#eeeeee';
-    style.getFill().setColor(color);
-    return style;
-  },
-});
+    for (let i=0; i<elements.length; i++) {
+        elements[i].style.display = currState ? "block" : "none"
+    }
+}
 
-var map = new ol.Map({
-    target: 'map',
-    layers: [
-        vectorLayer,
-      new ol.layer.Tile({
-        source: new ol.source.OSM()
-      })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([20.03728668367604, 50.07333660761058]),
-      zoom: 16,
-      minZoom: 15,
-      maxZoom: 18,
-      nearest: true
-    })
-  });
-
-const highlightStyle = new Style({
-  stroke: new Stroke({
-    color: 'rgba(255, 255, 255, 0.7)',
-    width: 2,
-  }),
-});
-
-const featureOverlay = new VectorLayer({
-  source: new VectorSource(),
-  map: map,
-  style: highlightStyle,
-});
-
-let highlight;
-const displayFeatureInfo = function (pixel) {
-  vectorLayer.getFeatures(pixel).then(function (features) {
-    const feature = features.length ? features[0] : undefined;
-    const info = document.getElementById('info');
-    if (features.length) {
-      info.innerHTML = feature.get('ECO_NAME') + ': ' + feature.get('NNH_NAME');
-    } else {
-      info.innerHTML = '&nbsp;';
+function playSound(soundId) {
+    const soundIndex = soundId - 1;
+    console.log(ALL_AUDIOS)
+    if (!ALL_AUDIOS[soundIndex]) {
+        ALL_AUDIOS[soundIndex] = {
+            "id": soundIndex,
+            "audio": new Audio(src="samples/" + soundIndex + ".wav"),
+            "is_playing": false,
+        }
     }
 
-    if (feature !== highlight) {
-      if (highlight) {
-        featureOverlay.getSource().removeFeature(highlight);
-      }
-      if (feature) {
-        featureOverlay.getSource().addFeature(feature);
-      }
-      highlight = feature;
+    if (!typeof ALL_AUDIOS[soundIndex]["audio"] === "audio") {
+        console.log("NOT LOADED YET")
+        return
     }
-  });
-};
 
-map.on('pointermove', function (evt) {
-  if (evt.dragging) {
-    return;
-  }
-  const pixel = map.getEventPixel(evt.originalEvent);
-  displayFeatureInfo(pixel);
-});
+    if (ALL_AUDIOS[soundIndex]["is_playing"]) {
+        ALL_AUDIOS[soundIndex]["audio"].pause()
+        ALL_AUDIOS[soundIndex]["is_playing"] = false
+    }
+    else {
+        ALL_AUDIOS[soundIndex]["audio"].play()
+        ALL_AUDIOS[soundIndex]["audio"].loop = true
+        ALL_AUDIOS[soundIndex]["is_playing"] = true
+    }
 
-map.on('click', function (evt) {
-  displayFeatureInfo(evt.pixel);
-});
+    document.getElementsByClassName(`piece${soundId}`)[0].classList.toggle(`piece-active`)
+}
