@@ -15,7 +15,7 @@ function playSound(soundId) {
     if (!ALL_AUDIOS[soundIndex]) {
         ALL_AUDIOS[soundIndex] = {
             "id": soundIndex,
-            "audio": new Audio(src="samples/" + soundIndex + ".wav"),
+            "audio": new Audio(src="sounds/" + soundIndex + ".wav"),
             "is_playing": false,
         }
     }
