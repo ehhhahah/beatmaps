@@ -2,10 +2,15 @@ var ALL_AUDIOS = new Array(2)
 
 function hideShowClassElement(className) {
     let currState = document.getElementsByClassName(`piece${className}`)[0].classList.toggle(`piece-active`);
-    const elements  = document.getElementsByClassName(className);
+    const elements = document.getElementsByClassName(className);
 
     for (let i=0; i<elements.length; i++) {
         elements[i].style.display = currState ? "block" : "none"
+        elements[i].popover({
+            title: "Title",
+            content: "Content",
+            container: 'body'
+        });
     }
 }
 

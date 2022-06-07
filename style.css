@@ -1,3 +1,13 @@
+body {
+    background-color: #eeeeee;
+}
+
+h1 {
+    margin: 10%;
+    padding: 2%;
+    text-align: center;
+}
+
 .card-group {
     margin: 2%;
     text-align: center;
@@ -17,6 +27,7 @@
 .puzzle {
     background-color: black;
     color: white;
+    fill: blue;
     text-align: center;
     text-justify: auto;
     opacity: 10%;
@@ -27,10 +38,24 @@
 
 .puzzle:hover {
     opacity: 50%;
-    background-color: red;
+    background-color: blue;
 }
 
 .piece-active {
     opacity: 30%;
-    background-color: red;
+    animation-name: example;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
 }
+
+@keyframes example {
+    0% {opacity: 30%; fill: #aa00ff;}
+    50% {opacity: 60%; fill: #f00aff;}
+    100% {opacity: 30%; fill: #aa00ff;}
+  }
+
+  svg {
+    object-position: 100% 0;
+    align: center;
+    top: 0px;
+  }
