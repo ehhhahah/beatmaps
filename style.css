@@ -1,5 +1,5 @@
 body {
-    background: linear-gradient(#ffffff, #ff0000);
+    background: linear-gradient(#ffffff, #ff8888, #ffffff);
     font-family: helvetica, arial, courier new;
     text-align: center;
 	/* background-size: 400% 400%; */
@@ -55,16 +55,16 @@ h2:hover {
 }
 
 .piece-active {
-    opacity: 60%;
+    opacity: 70%;
     animation-name: example;
     animation-duration: 2s;
     animation-iteration-count: infinite;
 }
 
 @keyframes example {
-    0% {opacity: 90%; fill: #ff0000;}
-    50% {opacity: 60%; fill: #ff0000;}
-    100% {opacity: 90%; fill: #ff0000;}
+    0% {opacity: 80%; fill: #0000ff;}
+    50% {opacity: 90%; fill: #880088;}
+    100% {opacity: 80%; fill: #0000ff;}
   }
 
   .container {
