@@ -10,14 +10,13 @@ with open('maps/mapa_inkscaped.svg') as map_file:
     for line in map_file:
         # TODO line = line.replace('fill:#000000', "")
         if "<g" in line:
+            # TODO if sound_num == 1: sound_num += 1 continue
+
             line = line.replace(
                 '<g',
                 f"""<g class="puzzle piece{sound_num}" onclick="playSound({sound_num})" """
                 )
             sound_num += 1
-        if color_match in line:
-            # TODO
-            pass
         new_file_str += line
 
 print(f"Generated {sound_num} pieces")
