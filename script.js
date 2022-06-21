@@ -62,8 +62,8 @@ function playSound(soundId) {
     }
     else {
         ALL_AUDIOS[soundIndex]["audio"].forEach(audioObj => {
-            audioObj.play()
             audioObj.loop = true
+            audioObj.play()
         })
         ALL_AUDIOS[soundIndex]["is_playing"] = true
     }
