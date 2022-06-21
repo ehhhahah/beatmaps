@@ -1,27 +1,19 @@
 body {
-    background-color: #0000ff00;
+    background: linear-gradient(rgb(255, 255, 255), rgb(0, 0, 255));
+	/* background-size: 400% 400%; */
 }
 
 h1 {
-    margin: 10%;
+    font-family: helvetica, arial;
     padding: 2%;
     text-align: center;
 }
 
-.card-group {
-    margin: 2%;
-    text-align: center;
-    /* cursor: pointer; */
-    height: 50px;
-}
-
-.card {
-    margin: 1%;
-}
-
-.container-background {
-    margin: 5px;
-    background-image:url(/maps/map.png);
+.text-stroke {
+	color: white;
+	font-size: 60px;
+	-webkit-text-stroke-width: 3px;
+    -webkit-text-stroke-color: #0000ff;
 }
 
 .puzzle {
@@ -30,32 +22,38 @@ h1 {
     fill: blue;
     text-align: center;
     text-justify: auto;
-    opacity: 10%;
-    width:300px;
-    height:300px;
+    opacity: 30%;
     cursor: pointer;
  }
 
 .puzzle:hover {
-    opacity: 50%;
+    opacity: 90%;
     background-color: blue;
 }
 
 .piece-active {
-    opacity: 30%;
+    opacity: 60%;
     animation-name: example;
-    animation-duration: 1s;
+    animation-duration: 2s;
     animation-iteration-count: infinite;
 }
 
 @keyframes example {
-    0% {opacity: 30%; fill: #aa00ff;}
-    50% {opacity: 60%; fill: #f00aff;}
-    100% {opacity: 30%; fill: #aa00ff;}
+    0% {opacity: 90%; fill: #ff0000;}
+    50% {opacity: 60%; fill: #0000ff;}
+    100% {opacity: 90%; fill: #ff0000;}
   }
 
-  svg {
-    object-position: 100% 0;
-    align: center;
-    top: 0px;
+  .container {
+    /* display: flex; */
+    /* justify-content: center; */
+  }
+
+  .svgContainer {
+    border: solid 5px blue;
+    width: fit-content;
+    height: fit-content;
+    /* margin: 10%; */
+    display: flex;
+    /* justify-content: left; */
   }

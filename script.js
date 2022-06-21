@@ -71,12 +71,16 @@ function playSound(soundId) {
     document.getElementsByClassName(`piece${soundId}`)[0].classList.toggle(`piece-active`)
 }
 
+function getScrollRGBBlueToRed() {
+    return `rgb(${parseInt(getVerticalScrollPercentage(document.body) * 255)}, 0, ${255 - parseInt(getVerticalScrollPercentage(document.body) * 255)})`
+}
+
 window.addEventListener('scroll', function () {
-    console.log(getVerticalScrollPercentage(document.body))
+    // console.log(getVerticalScrollPercentage(document.body))
     setModAudioVolume(getVerticalScrollPercentage(document.body))
     // console.log("#0000ff" + Math.floor(getVerticalScrollPercentage(document.body) * 100).toString(16))
     // document.body.style.backgroundColor = "#0000ff" + Math.floor(getVerticalScrollPercentage(document.body) * 100).toString(16);
-
-    document.body.style.backgroundColor = `rgba(255, 255, 0, ${getVerticalScrollPercentage(document.body)})`;
+    document.getElementsByClassName('svgContainer')[0].style.borderColor = getScrollRGBBlueToRed()
+    document.body.style.background = `linear-gradient(rgb(255, 255, 255), ${getScrollRGBBlueToRed()});`
   });
   
