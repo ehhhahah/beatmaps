@@ -72,7 +72,7 @@ function playSound(soundId) {
 }
 
 function getScrollRGBBlueToRed() {
-    return `rgb(${parseInt(getVerticalScrollPercentage(document.body) * 255)}, 0, ${255 - parseInt(getVerticalScrollPercentage(document.body) * 255)})`
+    return `rgb(${255 - parseInt(getVerticalScrollPercentage(document.body) * 255)}, 0, ${parseInt(getVerticalScrollPercentage(document.body) * 255)})`
 }
 
 window.addEventListener('scroll', function () {

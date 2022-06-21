@@ -1,25 +1,48 @@
 body {
-    background: linear-gradient(rgb(255, 255, 255), rgb(0, 0, 255));
+    background: linear-gradient(#ffffff, #ff0000);
+    font-family: helvetica, arial, courier new;
+    text-align: center;
 	/* background-size: 400% 400%; */
 }
 
-h1 {
-    font-family: helvetica, arial;
-    padding: 2%;
-    text-align: center;
+h1:hover {
+    font-style: italic;
+}
+
+h2: {
+   top: 5%;
+}
+
+a, h2 {
+    color: #0000ff !important;
+    /* opacity: 50%;     */
+}
+
+h2:hover {
+    opacity: 100%;
+}
+
+.subtle-info {
+    color: #ff0000;
+    opacity: 50%;
+    font-style: italic;
+}
+
+.subtle-info:hover {
+    opacity: 100%;
 }
 
 .text-stroke {
 	color: white;
 	font-size: 60px;
 	-webkit-text-stroke-width: 3px;
-    -webkit-text-stroke-color: #0000ff;
+    -webkit-text-stroke-color: #ff0000;
 }
 
 .puzzle {
     background-color: black;
     color: white;
-    fill: blue;
+    fill: #ff0000;
     text-align: center;
     text-justify: auto;
     opacity: 30%;
@@ -28,7 +51,7 @@ h1 {
 
 .puzzle:hover {
     opacity: 90%;
-    background-color: blue;
+    background-color: #ff0000;
 }
 
 .piece-active {
@@ -40,20 +63,24 @@ h1 {
 
 @keyframes example {
     0% {opacity: 90%; fill: #ff0000;}
-    50% {opacity: 60%; fill: #0000ff;}
+    50% {opacity: 60%; fill: #ff0000;}
     100% {opacity: 90%; fill: #ff0000;}
   }
 
   .container {
     /* display: flex; */
     /* justify-content: center; */
+
   }
 
   .svgContainer {
-    border: solid 5px blue;
+    border: solid 5px #ff0000;
     width: fit-content;
     height: fit-content;
+
+    margin: auto;
+
     /* margin: 10%; */
     display: flex;
-    /* justify-content: left; */
+    justify-content: center;
   }
