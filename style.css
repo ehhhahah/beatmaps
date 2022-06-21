@@ -63,7 +63,7 @@ h2:hover {
 
 @keyframes example {
     0% {opacity: 80%; fill: #0000ff;}
-    50% {opacity: 90%; fill: #880088;}
+    50% {opacity: 90%; fill: #7777ff;}
     100% {opacity: 80%; fill: #0000ff;}
   }
 

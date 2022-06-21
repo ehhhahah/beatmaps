@@ -47,6 +47,9 @@ function playSound(soundId) {
             ],
             "is_playing": false,
         }
+        // TODO we play both sounds normal volume at start and change it on scroll, 
+        //   so the audio is not muted until user scrolls. What's the fix here?
+        // ALL_AUDIOS[soundIndex]["audio"][1].volume = 0;
     }
 
     if (!checkAudioTypes(ALL_AUDIOS[soundIndex]["audio"])) {
@@ -76,10 +79,7 @@ function getScrollRGBBlueToRed() {
 }
 
 window.addEventListener('scroll', function () {
-    // console.log(getVerticalScrollPercentage(document.body))
     setModAudioVolume(getVerticalScrollPercentage(document.body))
-    // console.log("#0000ff" + Math.floor(getVerticalScrollPercentage(document.body) * 100).toString(16))
-    // document.body.style.backgroundColor = "#0000ff" + Math.floor(getVerticalScrollPercentage(document.body) * 100).toString(16);
     document.getElementsByClassName('svgContainer')[0].style.borderColor = getScrollRGBBlueToRed()
     document.body.style.background = `linear-gradient(rgb(255, 255, 255), ${getScrollRGBBlueToRed()});`
   });
