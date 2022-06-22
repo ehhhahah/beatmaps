@@ -1,0 +1,25 @@
+::selection {
+    color: white;
+    background: #ff0000;
+}
+
+.puzzle {
+    background-color: black;
+    color: white;
+    fill: #ff0000;
+    text-align: center;
+    text-justify: auto;
+    cursor: pointer;
+}
+
+.puzzle:hover {
+    opacity: 50%;
+    background-color: #0000ff;
+}
+
+.piece-active {
+    opacity: 30%;
+    animation-name: activeAnimation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}

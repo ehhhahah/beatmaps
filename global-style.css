@@ -1,0 +1,116 @@
+body {
+    background: #ffffdd80;
+    font-family: 'Noto Serif', Verdana, Arial, serif;
+    text-align: center;
+}
+
+.index-style {
+    border: 16px solid black;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    right: 0;
+}
+
+a, h1, p, li {
+    color: #414141 !important;
+}
+
+a:hover {
+    color: #000000 !important;
+}
+
+li:hover {
+    opacity: 100% !important;
+}
+
+.title {
+    margin-top: 0px;
+    margin-bottom: 50px;
+    font-weight: 100;
+    font-size: xx-large;
+    align-self: center;
+}
+
+.authors {
+    list-style: none;
+    opacity: 75%;
+    font-style: italic;
+    margin-top: 80px;
+}
+
+.subtle-info {
+    opacity: 50%;
+    font-style: italic;
+}
+
+.subtle-info:hover {
+    opacity: 100%;
+}
+
+@keyframes activeAnimation {
+    0% {opacity: 30%; fill: #aa00ff;}
+    50% {opacity: 60%; fill: #f00aff;}
+    100% {opacity: 30%; fill: #aa00ff;}
+}
+
+.svgContainer {
+    width: fit-content;
+    height: fit-content;
+
+    margin: auto;
+
+    display: flex;
+    justify-content: center;
+}
+
+::selection {
+    color: white;
+    background: #414141;
+}
+
+.text-photo-container {
+    display: flex;
+    justify-content: end;
+    margin: 0;
+}
+
+.text-photo-container > p {
+    padding: 100px;
+    text-align: right !important;
+}
+
+@media (max-width: 900px) {
+    .text-photo-container {
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .text-photo-container > p {
+        padding: 100px;
+        text-align: center !important;
+    }
+
+    .text-photo-container > picture {
+        /* padding: 10%; */
+        /* right: 200px !important; */
+    }
+}
+
+body::-webkit-scrollbar {
+    width: 12px;
+}
+  
+body::-webkit-scrollbar-track {
+    background: #ffffdd80;
+}
+  
+body::-webkit-scrollbar-thumb {
+    background-color: black;
+}
+
+.link-container:hover {
+    background: #ddddcc !important;
+}
