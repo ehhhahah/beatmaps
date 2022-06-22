@@ -14,7 +14,7 @@ with open('maps/mapa_inkscaped.svg') as map_file:
 
             line = line.replace(
                 '<g',
-                f"""<g class="puzzle piece{sound_num}" onclick="playSound({sound_num})" """
+                f"""<g class="puzzle piece{sound_num}" onclick="playSound('nowa-huta/', {sound_num})" """
                 )
             sound_num += 1
         new_file_str += line
