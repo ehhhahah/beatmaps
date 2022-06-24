@@ -1,4 +1,5 @@
 sound_num = -1
+sounds_amount = 37
 SOUNDS_DATA = {
     0: ["Wojtek", "Gruszka na wierzbie", "Sosna na lipie"],
     1: ["Asia", "ŚcieżĄ zła", "GĄŚĆŻÓŁĆŹ"],
@@ -34,12 +35,13 @@ with open('nowa-huta/maps/mapa_inkscaped_manual_cut.svg') as map_file:
 
         # add sounds to groups
         if "<g" in line:
-            if sound_num != -1:
+            if sound_num == -1: sound_num += 1
+            elif sound_num <= sounds_amount:
                 line = line.replace(
                     '<g',
                     f"""<g class="puzzle piece{sound_num}" onclick="playSound('nowa-huta/', {sound_num})" """
                     )
-            sound_num += 1
+                sound_num += 1
 
         # add authorship tag
         if '</g>' in line and get_sound_info(sound_num-1):

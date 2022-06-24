@@ -12,9 +12,21 @@
     cursor: pointer;
 }
 
+g {
+    fill: #dd0000;
+    cursor: not-allowed;
+}
+
 .puzzle:hover {
     opacity: 50%;
-    background-color: #0000ff;
+    /* fill: #ff0aaa; */
+}
+
+
+@keyframes activeAnimation {
+    0% {opacity: 30%; fill: #aa00ff;}
+    50% {opacity: 60%; fill: #f00aff;}
+    100% {opacity: 30%; fill: #aa00ff;}
 }
 
 .piece-active {

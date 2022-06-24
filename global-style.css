@@ -50,12 +50,6 @@ li:hover {
     opacity: 100%;
 }
 
-@keyframes activeAnimation {
-    0% {opacity: 30%; fill: #aa00ff;}
-    50% {opacity: 60%; fill: #f00aff;}
-    100% {opacity: 30%; fill: #aa00ff;}
-}
-
 .svgContainer {
     width: fit-content;
     height: fit-content;
