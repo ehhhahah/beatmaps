@@ -32,15 +32,15 @@ function setModAudioVolumeByScroll() {
     });
 }
 
-function playSound(projectPath, soundId) {
+function playSound(projectPath, soundId, fileFormat1=".wav", fileFormat2=".wav") {
     const soundIndex = soundId;
     console.log(ALL_AUDIOS)
     if (!ALL_AUDIOS[soundIndex]) {
         ALL_AUDIOS[soundIndex] = {
             "id": soundIndex,
             "audio": [
-                new Audio(src=projectPath + "sounds/" + soundIndex + ".mp3"),
-                new Audio(src=projectPath + "sounds/" + soundIndex + "_mod.wav")
+                new Audio(src=projectPath + "sounds/" + soundIndex + fileFormat1),
+                new Audio(src=projectPath + "sounds/" + soundIndex + "_mod" + fileFormat2)
             ],
             "is_playing": false,
         }
