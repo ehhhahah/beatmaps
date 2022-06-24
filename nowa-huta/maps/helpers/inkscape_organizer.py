@@ -2,11 +2,13 @@ sound_num = -1
 SOUNDS_DATA = {
     0: ["Wojtek", "Gruszka na wierzbie", "Sosna na lipie"],
     1: ["Asia", "ŚcieżĄ zła", "GĄŚĆŻÓŁĆŹ"],
-    2: ["Asia", "ŚcieżĄ zła", "GĄŚĆŻÓŁĆŹ"]
+    2: ["Asia", "ŚcieżĄ zła", "GĄŚĆŻÓŁĆŹ"],
+    10: ["Andrzej", "Coś", '']
 }
 
 color_match = 'style="fill:#'
-new_file_str = ""
+map_file_str = ""
+credits_file= ""
 MAIN_COLOR = "#ff0000"
 
 def get_sound_info(sound_id):
@@ -42,9 +44,50 @@ with open('nowa-huta/maps/mapa_inkscaped_manual_cut.svg') as map_file:
         # add authorship tag
         if '</g>' in line and get_sound_info(sound_num-1):
             line = line.replace('</g>', f'<title>{get_sound_info(sound_num-1)}</title></g>')
-        new_file_str += line
+        map_file_str += line
 
 print(f"Generated {sound_num} pieces")
 
 with open('nowa-huta/maps/helpers/new_map_parsed.svg', 'w') as f:
-    f.write(new_file_str)
+    f.write(map_file_str)
+
+def generate_credits_double_row(sound_id):
+    return f"""
+<tr>
+    <td>{sound_id} ↑</td>
+    <td>{SOUNDS_DATA[sound_id][0]}</td>
+    <td>{SOUNDS_DATA[sound_id][1]}</td>
+    <td><audio controls><source src="https://beatmaps.pages.dev/nowa-huta/sounds/{sound_id}.wav"></audio></td>
+</tr>
+<tr>
+    <td>{sound_id} ↓</td>
+    <td>{SOUNDS_DATA[sound_id][0]}</td>
+    <td>{SOUNDS_DATA[sound_id][2]}</td>
+    <td><audio controls><source src="https://beatmaps.pages.dev/nowa-huta/sounds/{sound_id}_mod.wav"></audio></td>
+</tr>"""
+
+def generate_credits_double_empty_row(sound_id):
+    return f"""
+<tr>
+    <td>{sound_id} ↑</td>
+    <td></td>
+    <td></td>
+    <td><audio controls><source src="https://beatmaps.pages.dev/nowa-huta/sounds/{sound_id}.wav"></audio></td>
+</tr>
+<tr>
+    <td>{sound_id} ↓</td>
+    <td></td>
+    <td></td>
+    <td><audio controls><source src="https://beatmaps.pages.dev/nowa-huta/sounds/{sound_id}_mod.wav"></audio></td>
+</tr>"""
+
+for credit_num in range(sound_num):
+    if credit_num in SOUNDS_DATA:
+        credits_file += generate_credits_double_row(credit_num)
+    else:
+        credits_file += generate_credits_double_empty_row(credit_num)
+    credit_num += 1
+
+with open('nowa-huta/maps/helpers/credits_table.html', 'w') as f:
+    f.write(credits_file)
+
