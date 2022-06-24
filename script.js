@@ -33,13 +33,13 @@ function setModAudioVolumeByScroll() {
 }
 
 function playSound(projectPath, soundId) {
-    const soundIndex = soundId - 1;
+    const soundIndex = soundId;
     console.log(ALL_AUDIOS)
     if (!ALL_AUDIOS[soundIndex]) {
         ALL_AUDIOS[soundIndex] = {
             "id": soundIndex,
             "audio": [
-                new Audio(src=projectPath + "sounds/" + soundIndex + ".wav"),
+                new Audio(src=projectPath + "sounds/" + soundIndex + ".mp3"),
                 new Audio(src=projectPath + "sounds/" + soundIndex + "_mod.wav")
             ],
             "is_playing": false,
