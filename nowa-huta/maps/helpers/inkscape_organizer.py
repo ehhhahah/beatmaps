@@ -1,19 +1,21 @@
-sound_num = -1
+sound_num = 14
 sounds_amount = -1
 SOUNDS_DATA = {
-    0: ['','sznurek do prania',''],
-    1: ['', 'domofon', ''],
+    0: ['','sznurek do prania','fortepian i talerz'],
+    1: ['', 'domofon', 'buahahaha'],
     2: ['', 'nalewanie wody', ''],
-    3: ['', 'trzmiel', ''],
-    4: ['', 'pszczola', ''],
-    5: ['', 'golebie', ''],
-    6: ['', 'plac centralny samochod', ''],
-    7: ['', 'toczaca sie butelka', ''],
-    8: ['', 'butelka spada', ''],
+    3: ['', 'trzmiel', 'trzmiel'],
+    4: ['', 'pszczola', 'pszczola'],
+    5: ['', 'golebie', 'korg'],
+    6: ['', 'plac centralny samochod', 'korg'],
+    7: ['', 'toczaca sie butelka', 'fortepian'],
+    8: ['', 'butelka spada', 'pisak'],
     9: ['', 'metalowa butelka', ''],
     10: ['','butelka sie toczy (wyciete)',''],
-    11: ['', 'jerzyki', ''],
-    12: ['', 'gwizdanie', '']
+    11: ['', 'jerzyki', 'fortepian'],
+    12: ['', 'gwizdanie', ''],
+    13: ['', '', 'impact'],
+    14: ['', '', 'fortepian']
 }
 
 # class="puzzle pieceX" onclick="playSound('nowa-huta/', X)"
@@ -23,46 +25,46 @@ map_file_str = ""
 credits_file= ""
 MAIN_COLOR = "#ff0000"
 
-def get_sound_info(sound_id):
-    return f"""
-    Top sound: "{SOUNDS_DATA[sound_id][1]}"
-    Bottom sound: "{SOUNDS_DATA[sound_id][2]}"
+# def get_sound_info(sound_id):
+#     return f"""
+#     Top sound: "{SOUNDS_DATA[sound_id][1]}"
+#     Bottom sound: "{SOUNDS_DATA[sound_id][2]}"
 
-    Author: {SOUNDS_DATA[sound_id][0]}
-    """ if sound_id in SOUNDS_DATA else None
+#     Author: {SOUNDS_DATA[sound_id][0]}
+#     """ if sound_id in SOUNDS_DATA else None
 
 
-with open('nowa-huta/maps/mapa_inkscaped_manual_cut.svg') as map_file:
-    for line in map_file:
-        # get rid of colors
-        if 'style="fill:#000000"' in line:
-            line = line.replace('style="fill:#000000"', '')
-        if ';fill:#000000' in line:
-            line = line.replace(';fill:#000000', '')
-        if 'fill="#000000"' in line:
-            line = line.replace('fill="#000000"', '')
-        if 'stroke="none"' in line:
-            line = line.replace('stroke="none"', '')
+# with open('nowa-huta/maps/mapa_inkscaped_manual_cut.svg') as map_file:
+#     for line in map_file:
+#         # get rid of colors
+#         if 'style="fill:#000000"' in line:
+#             line = line.replace('style="fill:#000000"', '')
+#         if ';fill:#000000' in line:
+#             line = line.replace(';fill:#000000', '')
+#         if 'fill="#000000"' in line:
+#             line = line.replace('fill="#000000"', '')
+#         if 'stroke="none"' in line:
+#             line = line.replace('stroke="none"', '')
 
-        # add sounds to groups
-        if "<g" in line:
-            if sound_num == -1: sound_num += 1
-            elif sound_num <= sounds_amount:
-                line = line.replace(
-                    '<g',
-                    f"""<g class="puzzle piece{sound_num}" onclick="playSound('nowa-huta/', {sound_num})" """
-                    )
-                sound_num += 1
+#         # add sounds to groups
+#         if "<g" in line:
+#             if sound_num == -1: sound_num += 1
+#             elif sound_num <= sounds_amount:
+#                 line = line.replace(
+#                     '<g',
+#                     f"""<g class="puzzle piece{sound_num}" onclick="playSound('nowa-huta/', {sound_num})" """
+#                     )
+#                 sound_num += 1
 
-        # add authorship tag
-        if '</g>' in line and get_sound_info(sound_num-1):
-            line = line.replace('</g>', f'<title>{get_sound_info(sound_num-1)}</title></g>')
-        map_file_str += line
+#         # add authorship tag
+#         if '</g>' in line and get_sound_info(sound_num-1):
+#             line = line.replace('</g>', f'<title>{get_sound_info(sound_num-1)}</title></g>')
+#         map_file_str += line
 
-print(f"Generated {sound_num} pieces")
+# print(f"Generated {sound_num} pieces")
 
-with open('nowa-huta/maps/helpers/new_map_parsed.svg', 'w') as f:
-    f.write(map_file_str)
+# with open('nowa-huta/maps/helpers/new_map_parsed.svg', 'w') as f:
+#     f.write(map_file_str)
 
 def generate_credits_double_row(sound_id):
     return f"""
