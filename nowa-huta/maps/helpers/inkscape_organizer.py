@@ -11,8 +11,9 @@ SOUNDS_DATA = {
     7: ['', 'toczaca sie butelka', ''],
     8: ['', 'butelka spada', ''],
     9: ['', 'metalowa butelka', ''],
-    10: ['','butelka sie toczy (wyciete)','']
-
+    10: ['','butelka sie toczy (wyciete)',''],
+    11: ['', 'jerzyki', ''],
+    12: ['', 'gwizdanie', '']
 }
 
 # class="puzzle pieceX" onclick="playSound('nowa-huta/', X)"
