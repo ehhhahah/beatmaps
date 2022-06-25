@@ -1,11 +1,21 @@
 sound_num = -1
-sounds_amount = 37
+sounds_amount = -1
 SOUNDS_DATA = {
-    0: ["Wojtek", "Gruszka na wierzbie", "Sosna na lipie"],
-    1: ["Asia", "ŚcieżĄ zła", "GĄŚĆŻÓŁĆŹ"],
-    2: ["Asia", "ŚcieżĄ zła", "GĄŚĆŻÓŁĆŹ"],
-    10: ["Andrzej", "Coś", '']
+    0: ['','sznurek do prania',''],
+    1: ['', 'domofon', ''],
+    2: ['', 'nalewanie wody', ''],
+    3: ['', 'trzmiel', ''],
+    4: ['', 'pszczola', ''],
+    5: ['', 'golebie', ''],
+    6: ['', 'plac centralny samochod', ''],
+    7: ['', 'toczaca sie butelka', ''],
+    8: ['', 'butelka spada', ''],
+    9: ['', 'metalowa butelka', ''],
+    10: ['','butelka sie toczy (wyciete)','']
+
 }
+
+# class="puzzle pieceX" onclick="playSound('nowa-huta/', X)"
 
 color_match = 'style="fill:#'
 map_file_str = ""

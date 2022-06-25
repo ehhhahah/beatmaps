@@ -27,12 +27,13 @@ function checkAudioTypes(audioArray) {
 
 function setModAudioVolumeByScroll() {
     ALL_AUDIOS.forEach(audioContainer => {
-        audioContainer["audio"][0].volume = SCROLL_POSITION;
-        audioContainer["audio"][1].volume = 1 - SCROLL_POSITION;
+        audioContainer["audio"][0].volume = 1 - SCROLL_POSITION;
+        audioContainer["audio"][1].volume = SCROLL_POSITION;
     });
 }
 
 function playSound(projectPath, soundId, fileFormat1=".wav", fileFormat2=".wav") {
+    // projectPath = ''
     const soundIndex = soundId;
     console.log(ALL_AUDIOS)
     if (!ALL_AUDIOS[soundIndex]) {
