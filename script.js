@@ -76,3 +76,5 @@ window.addEventListener('scroll', function () {
     SCROLL_POSITION = getVerticalScrollPercentage(document.body)
     setModAudioVolumeByScroll()
 });
+
+// https://docs.google.com/presentation/d/1RPXhoVShcwOZsAoITz_CTd9_Gegd3UH2HjLFb7IyGiA/edit#slide=id.gc6f59039d_0_0
