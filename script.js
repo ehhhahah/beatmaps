@@ -32,7 +32,7 @@ function setModAudioVolumeByScroll() {
     });
 }
 
-function playSound(projectPath, soundId, fileFormat1=".wav", fileFormat2=".wav") {
+function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3") {
     // projectPath = ''
     const soundIndex = soundId;
     console.log(ALL_AUDIOS)
