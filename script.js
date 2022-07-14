@@ -1,5 +1,9 @@
+const { pan, zoom, getScale, setScale, resetScale } = svgPanZoomContainer;
+
 let ALL_AUDIOS = new Array(2)
 let SCROLL_POSITION = 0
+const ZOOM_MIN = 0.3
+const ZOOM_MAX = 5
 
 function hideShowClassElement(className) {
     let currState = document.getElementsByClassName(`piece${className}`)[0].classList.toggle(`piece-active`);
@@ -8,12 +12,6 @@ function hideShowClassElement(className) {
     for (let i=0; i<elements.length; i++) {
         elements[i].style.display = currState ? "block" : "none"
     }
-}
-
-function getVerticalScrollPercentage(elm) {
-    let p = elm.parentNode
-    let volume = (elm.scrollTop || p.scrollTop) / (p.scrollHeight - p.clientHeight )
-    return volume > 1 ? 1 : volume 
 }
 
 function checkAudioTypes(audioArray) {
@@ -72,9 +70,16 @@ function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3")
     document.getElementsByClassName(`piece${soundId}`)[0].classList.toggle(`piece-active`)
 }
 
-window.addEventListener('scroll', function () {
-    SCROLL_POSITION = getVerticalScrollPercentage(document.body)
-    setModAudioVolumeByScroll()
-});
+function getZoomPercentage(htmlObj) {
+    return getScale((htmlObj - ZOOM_MIN)/(ZOOM_MAX - ZOOM_MIN))
+}
 
-// https://docs.google.com/presentation/d/1RPXhoVShcwOZsAoITz_CTd9_Gegd3UH2HjLFb7IyGiA/edit#slide=id.gc6f59039d_0_0
+    const container_ = document.getElementsByClassName('svgContainer')[0]
+
+    const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            console.log('scale:', getZoomPercentage(container_));
+            SCROLL_POSITION = getZoomPercentage(container_)
+            setModAudioVolumeByScroll()
+        });
+    });
