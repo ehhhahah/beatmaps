@@ -74,19 +74,17 @@ function getZoomPercentage(htmlObj) {
     return (getScale(htmlObj) - ZOOM_MIN)/(ZOOM_MAX - ZOOM_MIN)
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    const container_ = document.getElementsByClassName('svgContainer')[0]
+const container_ = document.getElementsByClassName('svgContainer')[0]
 
-    const observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-            console.log('scale:', getZoomPercentage(container_));
-            SCROLL_POSITION = getZoomPercentage(container_)
-            setModAudioVolumeByScroll()
-        });
+const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+        console.log('scale:', getZoomPercentage(container_));
+        SCROLL_POSITION = getZoomPercentage(container_)
+        setModAudioVolumeByScroll()
     });
-    
-    observer.observe(container_.firstElementChild, {
-        attributes: true,
-        attributeFilter: ['transform'],
-    });
-})
+});
+
+observer.observe(container_.firstElementChild, {
+    attributes: true,
+    attributeFilter: ['transform'],
+});
