@@ -33,7 +33,7 @@ function setModAudioVolumeByScroll() {
 function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3") {
     // projectPath = ''
     const soundIndex = soundId;
-    console.log(ALL_AUDIOS)
+    // console.log(ALL_AUDIOS)
     if (!ALL_AUDIOS[soundIndex]) {
         ALL_AUDIOS[soundIndex] = {
             "id": soundIndex,
@@ -71,15 +71,20 @@ function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3")
 }
 
 function getZoomPercentage(htmlObj) {
-    return getScale((htmlObj - ZOOM_MIN)/(ZOOM_MAX - ZOOM_MIN))
+    return (getScale(htmlObj) - ZOOM_MIN)/(ZOOM_MAX - ZOOM_MIN)
 }
 
-    const container_ = document.getElementsByClassName('svgContainer')[0]
+const container_ = document.getElementsByClassName('svgContainer')[0]
 
-    const observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-            console.log('scale:', getZoomPercentage(container_));
-            SCROLL_POSITION = getZoomPercentage(container_)
-            setModAudioVolumeByScroll()
-        });
+const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+        console.log('scale:', getZoomPercentage(container_));
+        SCROLL_POSITION = getZoomPercentage(container_)
+        setModAudioVolumeByScroll()
     });
+});
+
+observer.observe(container_.firstElementChild, {
+    attributes: true,
+    attributeFilter: ['transform'],
+});
