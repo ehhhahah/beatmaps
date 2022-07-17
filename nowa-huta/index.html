@@ -26,7 +26,7 @@
 
       <!-- technical meta -->
       <meta content="width=device-width, initial-scale=1" name="viewport"/>
-      <!-- <base href="https://beatmaps.pages.dev/"> -->
+      <base href="https://beatmaps.pages.dev/">
       <meta charset="utf-8"/>
       <!-- representation meta -->
       <title>
@@ -42,7 +42,8 @@
    
    <body>
       <div class="slidecontainer">
-         <input type="range" min="25" max="225" value="100" class="slider" onchange="slide(this.value)">
+         <!-- <input type="range" min="25" max="225" value="100" class="slider" onchange="slide(this.value)"> -->
+         <input type="range" class="custom slider" min="25" max="225" value ="100" onchange="slide(this.value)">
       </div>
       <br/>
       <br/>
@@ -1266,6 +1267,8 @@
          <li>Mateusz Zygmunt</li>
          <li>Aleksander</li>
          <li>Aga</li>
+         <li><br/></li>
+         <li><a href="https://github.com/dwyl/range-touch">range-touch</a> code</li>
       </ul>
       <div class="subtle-info">
          <p>Debug info:</p>
@@ -1273,4 +1276,5 @@
       </div>
    </body>
    <script src="../script.js"></script>
+   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script> <!-- 26kb -->
 </html> 
