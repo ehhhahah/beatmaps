@@ -38,14 +38,18 @@
       
       <link rel="stylesheet" type="text/css" href="../global-style.css">
       <link rel="stylesheet" type="text/css" href="/nowa-huta/nowa-huta-style.css">
-      <script src="../script.js"></script>
    </head>
    
    <body>
+      <div class="slidecontainer">
+         <input type="range" min="25" max="225" value="100" class="slider" onchange="slide(this.value)">
+      </div>
+      <br/>
+      <br/>
       <p class="subtle-info">Click any place on map to play a sound and scroll down to change it</p>
       <h1 class="title"><a href="nowa-huta/index.html" style="text-decoration: none">BeatMap 1: Nowa Huta, Kraków</a></h1>
       <div class="svgContainer">
-         <svg xmlns="http://www.w3.org/2000/svg" height="2248.0px" width="1700.0px"  version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" id="14fa3160-f16b-11ec-b154-a8a1598cb569">
+         <svg xmlns="http://www.w3.org/2000/svg" height="2304px" width="1700px" transform="scale(1)" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" id="svgmap">
             <defs
                id="defs290">
             <inkscape:perspective
@@ -76,9 +80,7 @@
                inkscape:window-y="25"
                inkscape:window-maximized="1"
                inkscape:current-layer="g290" />
-            <g
-               transform="translate(0.000000,2304.000000) scale(0.100000,-0.100000)"
-               id="g290">
+            <g transform="translate(0, 2304) scale(0.1, -0.1)" id="g290">
               <g
                  id="g291"
                  inkscape:label="drogi"
@@ -1266,4 +1268,5 @@
          <li>Aga</li>
       </ul>
    </body>
+   <script src="../script.js"></script>
 </html> 

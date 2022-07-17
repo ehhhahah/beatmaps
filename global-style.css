@@ -2,6 +2,7 @@ body {
     background: #ffffdd80;
     font-family: 'Noto Serif', Verdana, Arial, serif;
     text-align: center;
+    margin: 0;
 }
 
 .index-style {
@@ -86,11 +87,6 @@ li:hover {
         padding: 100px;
         text-align: center !important;
     }
-
-    .text-photo-container > picture {
-        /* padding: 10%; */
-        /* right: 200px !important; */
-    }
 }
 
 body::-webkit-scrollbar {
@@ -123,4 +119,30 @@ td, th {
   
 tr:nth-child(even) {
     background-color: #00000011;
+}
+
+/* https://codepen.io/freoted/pen/yagWgZ */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    left: 0;
+    z-index: 99999;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    cursor: pointer;
+    background-color: #ff000022;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    height: 30px;
+    width: 30px;
+    border-radius: 21px;
+    background: red;
+    cursor: pointer;
+    -webkit-appearance: none;
 }

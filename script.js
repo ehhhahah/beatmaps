@@ -1,5 +1,6 @@
 let ALL_AUDIOS = new Array(2)
-let SCROLL_POSITION = 0
+let ZOOM_POSITION = 0  //0-1 range
+let map = document.getElementById("svgmap");
 
 function hideShowClassElement(className) {
     let currState = document.getElementsByClassName(`piece${className}`)[0].classList.toggle(`piece-active`);
@@ -8,12 +9,6 @@ function hideShowClassElement(className) {
     for (let i=0; i<elements.length; i++) {
         elements[i].style.display = currState ? "block" : "none"
     }
-}
-
-function getVerticalScrollPercentage(elm) {
-    let p = elm.parentNode
-    let volume = (elm.scrollTop || p.scrollTop) / (p.scrollHeight - p.clientHeight )
-    return volume > 1 ? 1 : volume 
 }
 
 function checkAudioTypes(audioArray) {
@@ -25,10 +20,10 @@ function checkAudioTypes(audioArray) {
     return true
 }
 
-function setModAudioVolumeByScroll() {
+function setModAudioVolumeByZoom() {
     ALL_AUDIOS.forEach(audioContainer => {
-        audioContainer["audio"][0].volume = 1 - SCROLL_POSITION;
-        audioContainer["audio"][1].volume = SCROLL_POSITION;
+        audioContainer["audio"][0].volume = 1 - ZOOM_POSITION;
+        audioContainer["audio"][1].volume = ZOOM_POSITION;
     });
 }
 
@@ -62,7 +57,7 @@ function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3")
 
     else {
         ALL_AUDIOS[soundIndex]["audio"].forEach(audioObj => {
-            setModAudioVolumeByScroll()
+            setModAudioVolumeByZoom()
             audioObj.loop = true
             audioObj.play()
         })
@@ -72,9 +67,22 @@ function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3")
     document.getElementsByClassName(`piece${soundId}`)[0].classList.toggle(`piece-active`)
 }
 
-window.addEventListener('scroll', function () {
-    SCROLL_POSITION = getVerticalScrollPercentage(document.body)
-    setModAudioVolumeByScroll()
-});
+function slide(slideInput) {
+    // SVGTransformList of the element that has been clicked on
+    const tfmList = map.transform.baseVal;
+
+    // Create a separate transform object for each transform
+    const scale = map.createSVGTransform();
+    scale.setScale(slideInput/100, slideInput/100);
+
+    ZOOM_POSITION = 1 - ((slideInput - 25) / 200)
+    console.log(ZOOM_POSITION)
+
+    // apply the transformations by appending the SVGTransform objects to the SVGTransformList associated with the element
+    tfmList.clear()
+    tfmList.appendItem(scale);
+
+    setModAudioVolumeByZoom()
+}
 
 // https://docs.google.com/presentation/d/1RPXhoVShcwOZsAoITz_CTd9_Gegd3UH2HjLFb7IyGiA/edit#slide=id.gc6f59039d_0_0
