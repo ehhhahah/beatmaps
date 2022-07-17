@@ -67,6 +67,16 @@ function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3")
     document.getElementsByClassName(`piece${soundId}`)[0].classList.toggle(`piece-active`)
 }
 
+// create a hidden file input element
+var input  = document.createElement("input");
+input.type = "range";
+
+document.body.appendChild(input);
+
+// when the input content changes, do something
+input.onchange = slide(this.value)
+
+
 function slide(slideInput) {
     // SVGTransformList of the element that has been clicked on
     const tfmList = map.transform.baseVal;
@@ -77,6 +87,7 @@ function slide(slideInput) {
 
     ZOOM_POSITION = 1 - ((slideInput - 25) / 200)
     console.log(ZOOM_POSITION)
+    document.getElementById("debug").innerText = ZOOM_POSITION
 
     // apply the transformations by appending the SVGTransform objects to the SVGTransformList associated with the element
     tfmList.clear()

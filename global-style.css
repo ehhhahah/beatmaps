@@ -125,11 +125,12 @@ tr:nth-child(even) {
 input[type=range] {
     -webkit-appearance: none;
     width: 100%;
-    position: absolute;
+    position: fixed;
     padding: 0;
     margin: 0;
     left: 0;
     z-index: 99999;
+    opacity: 90%;
 }
 
 input[type=range]::-webkit-slider-runnable-track {
@@ -142,7 +143,7 @@ input[type=range]::-webkit-slider-thumb {
     height: 30px;
     width: 30px;
     border-radius: 21px;
-    background: red;
+    background: black;
     cursor: pointer;
     -webkit-appearance: none;
 }
