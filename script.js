@@ -67,11 +67,13 @@ function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3")
     document.getElementsByClassName(`piece${soundId}`)[0].classList.toggle(`piece-active`)
 }
 
-if (!!navigator.platform.match(/iPhone|iPad|iPod/)) {
+if (!!navigator.platform.match(/iPhone|iPad|iPod|MacIntel/)) {
+    // https://stackoverflow.com/a/60281090
     console.log("IPHONE")
     document.getElementsByClassName("slider")[0].addEventListener(
         "touchend",
         (touchEvent) => {
+            document.getElementById("debug").innerText += " touchevent " + touchEvent + " "
             var element = touchEvent.srcElement;
             if (element.min && element.max && touchEvent.changedTouches && touchEvent.changedTouches.length > 0) {
                 const max = Number(element.max);
@@ -115,6 +117,31 @@ if (!!navigator.platform.match(/iPhone|iPad|iPod/)) {
     );
 }
 
+var diagramSlider = document.getElementsByClassName("slider")[0];
+
+function iosPolyfill(e) {
+    document.getElementById("debug").innerText += " POLYFILL"
+  var val = (e.pageX - diagramSlider.getBoundingClientRect().left) /
+   (diagramSlider.getBoundingClientRect().right - diagramSlider.getBoundingClientRect().left),
+  max = diagramSlider.getAttribute("max"),
+  segment = 1 / (max - 1),
+  segmentArr = [];
+
+  max++;
+
+  for (var i = 0; i < max; i++) {
+    segmentArr.push(segment * i);
+  }
+
+  var segCopy = segmentArr.slice(),
+  ind = segmentArr.sort((a, b) => Math.abs(val - a) - Math.abs(val - b))[0];
+
+  diagramSlider.value = segCopy.indexOf(ind) + 1;
+}
+
+if (!!navigator.platform.match(/iPhone|iPod|iPad|MacIntel/)) {
+  diagramSlider.addEventListener("touchend", iosPolyfill, {passive: true});
+}
 
 function slide(slideInput) {
     // SVGTransformList of the element that has been clicked on
@@ -126,7 +153,7 @@ function slide(slideInput) {
 
     ZOOM_POSITION = 1 - ((slideInput - 25) / 200)
     console.log(ZOOM_POSITION)
-    document.getElementById("debug").innerText = ZOOM_POSITION
+    document.getElementById("debug").innerText += " " + ZOOM_POSITION
 
     // apply the transformations by appending the SVGTransform objects to the SVGTransformList associated with the element
     tfmList.clear()
