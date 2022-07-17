@@ -67,14 +67,53 @@ function playSound(projectPath, soundId, fileFormat1=".mp3", fileFormat2=".mp3")
     document.getElementsByClassName(`piece${soundId}`)[0].classList.toggle(`piece-active`)
 }
 
-// create a hidden file input element
-var input  = document.createElement("input");
-input.type = "range";
-
-document.body.appendChild(input);
-
-// when the input content changes, do something
-input.onchange = slide(this.value)
+if (!!navigator.platform.match(/iPhone|iPad|iPod/)) {
+    console.log("IPHONE")
+    document.getElementsByClassName("slider")[0].addEventListener(
+        "touchend",
+        (touchEvent) => {
+            var element = touchEvent.srcElement;
+            if (element.min && element.max && touchEvent.changedTouches && touchEvent.changedTouches.length > 0) {
+                const max = Number(element.max);
+                const min = Number(element.min);
+                let step = 1;
+                if (element.step) {
+                    step = Number(element.step);
+                }
+                //Calculate the complete range of the slider.
+                const range = max - min;
+    
+                const boundingClientRect = element.getBoundingClientRect();
+                const touch = touchEvent.changedTouches[0];
+    
+                //Calculate the slider value
+                const sliderValue = (touch.pageX - boundingClientRect.left) / (boundingClientRect.right - boundingClientRect.left) * range + min;
+    
+                //Find the closest valid slider value in respect of the step size
+                for (let i = min; i < max; i += step) {
+                    if (i >= sliderValue) {
+                        const previousValue = i - step;
+                        const previousDifference = sliderValue - previousValue;
+                        const currentDifference = i - sliderValue;
+                        if (previousDifference > currentDifference) {
+                            //The sliderValue is closer to the previous value than the current value.
+                            element.value = previousValue.toString();
+                        } else {
+                            element.value = i.toString();
+                        }
+    
+                        //Trigger the change event.
+                        element.dispatchEvent(new Event("change"));
+                        break;
+                    }
+                }
+            }
+        },
+        {
+            passive: true
+        }
+    );
+}
 
 
 function slide(slideInput) {
