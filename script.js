@@ -21,19 +21,18 @@ function checkAudioTypes(audioArray) {
     return true
 }
 
-function setModAudioVolumeByZoom() {
+function setModAudioVolumeByZoom(isSlide=false) {
     ALL_AUDIOS.forEach(audioContainer => {
         audioContainer["audio"][0].volume = 1 - ZOOM_POSITION;
         audioContainer["audio"][1].volume = ZOOM_POSITION;
 
-        if (audioContainer["audio"][0] !== 1 - ZOOM_POSITION ) {
+        if (audioContainer["audio"][0] !== 1 - ZOOM_POSITION && isSlide) {
             audioContainer["audio"][0].pause()
             audioContainer["audio"][0] = 1 - ZOOM_POSITION
             audioContainer["audio"][0].play()
         }
 
-
-        if (audioContainer["audio"][1] !== ZOOM_POSITION ) {
+        if (audioContainer["audio"][1] !== ZOOM_POSITION && isSlide) {
             audioContainer["audio"][1].pause()
             audioContainer["audio"][1] = ZOOM_POSITION
             audioContainer["audio"][1].play()
@@ -97,7 +96,7 @@ function slide(slideInput) {
     tfmList.clear()
     tfmList.appendItem(scale);
 
-    setModAudioVolumeByZoom()
+    setModAudioVolumeByZoom(true)
 }
 
 // https://docs.google.com/presentation/d/1RPXhoVShcwOZsAoITz_CTd9_Gegd3UH2HjLFb7IyGiA/edit#slide=id.gc6f59039d_0_0
