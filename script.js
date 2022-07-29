@@ -23,16 +23,17 @@ function checkAudioTypes(audioArray) {
 
 function setModAudioVolumeByZoom(isSlide=false) {
     ALL_AUDIOS.forEach(audioContainer => {
+        let iosDebug = false;
         audioContainer["audio"][0].volume = 1 - ZOOM_POSITION;
         audioContainer["audio"][1].volume = ZOOM_POSITION;
 
-        if (audioContainer["audio"][0] !== 1 - ZOOM_POSITION && isSlide) {
+        if (audioContainer["audio"][0] !== 1 - ZOOM_POSITION && isSlide && iosDebug) {
             audioContainer["audio"][0].pause()
             audioContainer["audio"][0] = 1 - ZOOM_POSITION
             audioContainer["audio"][0].play()
         }
 
-        if (audioContainer["audio"][1] !== ZOOM_POSITION && isSlide) {
+        if (audioContainer["audio"][1] !== ZOOM_POSITION && isSlide && iosDebug) {
             audioContainer["audio"][1].pause()
             audioContainer["audio"][1] = ZOOM_POSITION
             audioContainer["audio"][1].play()
