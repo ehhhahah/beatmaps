@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wesoła layered preview</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      font: 15px/1.4 "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+      background: #f3f6f4;
+      color: #14201a;
+    }
+    header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #c5d4cb;
+      background: #e7f0ea;
+    }
+    h1 { font-size: 1.15rem; margin: 0 0 0.35rem; }
+    p { margin: 0.25rem 0; max-width: 52rem; }
+    code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; }
+    .stage {
+      padding: 1rem;
+      overflow: auto;
+    }
+    object, img {
+      width: min(100%, 900px);
+      height: auto;
+      background: #fff;
+      box-shadow: 0 1px 0 #c5d4cb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Wesoła · layered preview</h1>
+    <p>
+      Open <code>wesola_layered.svg</code> in Inkscape for layers.
+      <code>network-roads</code> / <code>network-trains</code> are a Y-band clip of former piece-0
+      (band y=1980–2360). Toggle hidden layer <code>guide-rail-band</code> to see the cut.
+    </p>
+    <p>
+      Merges applied: piece-1, 36(+40), 38, 63, 68 ← nearby smalls.
+    </p>
+  </header>
+  <div class="stage">
+    <object type="image/svg+xml" data="wesola_layered.svg"></object>
+  </div>
+</body>
+</html>
