@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <!-- seo meta -->
+      <meta content="music web app wesola beatmap" name="keywords"/>
+      <meta content="Web musical app made to present sounds of Wesoła." name="description"/>
+      <meta content="ehh hahah, Joanna Wabik" name="author"/>
+
+      <!-- Primary Meta Tags -->
+      <title>BeatMap 2: Wesoła</title>
+      <meta name="title" content="BeatMap 2: Wesoła">
+      <meta name="description" content="Web musical app made to present sounds of Wesoła.">
+
+      <!-- Open Graph / Facebook -->
+      <meta property="og:type" content="website">
+      <meta property="og:url" content="https://beatmaps.pages.dev/wesola/">
+      <meta property="og:title" content="BeatMap 2: Wesoła">
+      <meta property="og:description" content="Web musical app made to present sounds of Wesoła.">
+
+      <!-- Twitter -->
+      <meta property="twitter:card" content="summary_large_image">
+      <meta property="twitter:title" content="BeatMap 2: Wesoła">
+      <meta property="twitter:description" content="Web musical app made to present sounds of Wesoła.">
+
+      <!-- technical meta -->
+      <meta content="width=device-width, initial-scale=1" name="viewport"/>
+      <base href="https://beatmaps.pages.dev/">
+      <meta charset="utf-8"/>
+      <link href="../assets/favicon_io/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+      <link href="../assets/favicon_io/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+      <link href="../assets/favicon_io/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+
+      <link rel="stylesheet" type="text/css" href="../global-style.css">
+      <link rel="stylesheet" type="text/css" href="/wesola/wesola-style.css">
+   </head>
+
+   <body class="wesola-map">
+      <p class="subtle-info">Click any place on map to play a sound</p>
+      <h1 class="title"><a href="wesola/" style="text-decoration: none">BeatMap 2: Wesoła</a></h1>
+      <div class="svgContainer">
+         <p class="svg-loading">Loading map…</p>
+      </div>
+      <ul class="authors">Authors:
+         <li><a href="https://linktr.ee/ehhhahah">ehh hahah</a></li>
+         <li><a href="https://yoxoko.wordpress.com/">Joanna Wabik</a></li>
+      </ul>
+   </body>
+
+   <script src="../script.js"></script>
+   <script>
+      (function loadWesolaSvg() {
+         const container = document.querySelector('.svgContainer');
+         // Resolve against the page URL so local preview works despite <base href>
+         const svgUrl = new URL('wesola.svg', window.location.href);
+
+         fetch(svgUrl)
+            .then(function (response) {
+               if (!response.ok) {
+                  throw new Error('HTTP ' + response.status);
+               }
+               return response.text();
+            })
+            .then(function (svgText) {
+               container.innerHTML = svgText;
+               const svg = container.querySelector('svg');
+               if (!svg) {
+                  throw new Error('No <svg> root in wesola.svg');
+               }
+               svg.id = 'svgmap';
+               // Shared script.js looks up #svgmap at load time; refresh after inject
+               if (typeof map !== 'undefined') {
+                  map = svg;
+               }
+            })
+            .catch(function () {
+               container.innerHTML =
+                  '<p class="svg-missing">Add <code>wesola/wesola.svg</code> here — this page loads it automatically.</p>';
+            });
+      })();
+   </script>
+</html>
