@@ -1,0 +1,84 @@
+/* Wesoła — mint / green palette (contrast to Nowa Huta yellow / red) */
+
+:root {
+    --wesola-bg: #e8f6f0;
+    --wesola-bg-wash: #d4efe4cc;
+    --wesola-ink: #1a3d34;
+    --wesola-accent: #2a9d7a;
+    --wesola-accent-deep: #1a6b54;
+    --wesola-accent-bright: #3ecf9a;
+    --wesola-hover: #b8e0d0;
+    --wesola-pulse-a: #1a8f6e;
+    --wesola-pulse-b: #5ee0b0;
+}
+
+body {
+    background: var(--wesola-bg-wash);
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--wesola-bg-wash);
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--wesola-ink);
+}
+
+a, h1, p, li {
+    color: var(--wesola-ink) !important;
+}
+
+a:hover {
+    color: var(--wesola-accent-deep) !important;
+}
+
+::selection {
+    color: white;
+    background: var(--wesola-accent);
+}
+
+.puzzle {
+    background-color: var(--wesola-ink);
+    color: white;
+    fill: var(--wesola-accent);
+    text-align: center;
+    text-justify: auto;
+    cursor: pointer;
+}
+
+g {
+    fill: var(--wesola-accent-deep);
+    cursor: not-allowed;
+}
+
+.puzzle:hover {
+    opacity: 50%;
+}
+
+@keyframes activeAnimation {
+    0% { opacity: 30%; fill: var(--wesola-pulse-a); }
+    50% { opacity: 60%; fill: var(--wesola-pulse-b); }
+    100% { opacity: 30%; fill: var(--wesola-pulse-a); }
+}
+
+.piece-active {
+    opacity: 30%;
+    animation-name: activeAnimation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.svg-loading,
+.svg-missing {
+    margin: 2rem auto;
+    max-width: 28rem;
+    padding: 1.5rem;
+    color: var(--wesola-ink);
+    opacity: 0.7;
+    font-style: italic;
+}
+
+#svgmap {
+    max-width: 100%;
+    height: auto;
+}
