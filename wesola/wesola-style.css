@@ -44,11 +44,16 @@ a:hover {
     text-align: center;
     text-justify: auto;
     cursor: pointer;
+    pointer-events: auto;
+}
+
+.puzzle path {
+    cursor: pointer;
 }
 
 g {
     fill: var(--wesola-accent-deep);
-    cursor: not-allowed;
+    cursor: default;
 }
 
 .puzzle:hover {
@@ -78,7 +83,17 @@ g {
     font-style: italic;
 }
 
-#svgmap {
+/* Fit map to viewport width; global .svgContainer is fit-content (2048px SVG). */
+.wesola-map .svgContainer {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 0.75rem;
+}
+
+.wesola-map #svgmap {
+    width: 100%;
     max-width: 100%;
     height: auto;
+    display: block;
 }
