@@ -1,7 +1,9 @@
 let ALL_AUDIOS = new Array(2)
 let ZOOM_POSITION = 0  //0-1 range
 let map = document.getElementById("svgmap");
-const range = new RangeTouch('input[type="range"]');
+if (typeof RangeTouch !== 'undefined' && document.querySelector('input[type="range"]')) {
+    new RangeTouch('input[type="range"]');
+}
 
 function hideShowClassElement(className) {
     let currState = document.getElementsByClassName(`piece${className}`)[0].classList.toggle(`piece-active`);
