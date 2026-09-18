@@ -87,7 +87,6 @@ g {
 .wesola-map .map-viewport {
     position: relative;
     width: 700px;
-    max-width: calc(100% - 1.5rem);
     box-sizing: border-box;
     margin: 0 auto;
     padding: 0;
@@ -98,12 +97,12 @@ g {
     -webkit-user-select: none;
     /* Soft dissolve at edges (no hard clip line) */
     -webkit-mask-image:
-        linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 36px), transparent),
-        linear-gradient(to bottom, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+        linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 20px), transparent),
+        linear-gradient(to bottom, transparent, #000 36px, #000 calc(100% - 20px), transparent);
     -webkit-mask-composite: source-in;
     mask-image:
-        linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 36px), transparent),
-        linear-gradient(to bottom, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+        linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 20px), transparent),
+        linear-gradient(to bottom, transparent, #000 36px, #000 calc(100% - 20px), transparent);
     mask-composite: intersect;
 }
 
