@@ -31,14 +31,31 @@
       <link href="../assets/favicon_io/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
 
       <link rel="stylesheet" type="text/css" href="../global-style.css">
-      <link rel="stylesheet" type="text/css" href="/wesola/wesola-style.css">
+      <!-- Page-local assets: <base href> would otherwise pull production files -->
+      <script>
+         window.__wesolaStyleReady = new Promise(function (resolve) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = new URL('wesola-style.css', window.location.href).href;
+            link.onload = function () { resolve(); };
+            link.onerror = function () { resolve(); };
+            document.head.appendChild(link);
+         });
+      </script>
    </head>
 
    <body class="wesola-map">
       <p class="subtle-info">Click any place on map to play a sound</p>
       <h1 class="title"><a href="wesola/" style="text-decoration: none">BeatMap 2: Wesoła</a></h1>
-      <div class="svgContainer">
-         <p class="svg-loading">Loading map…</p>
+      <div class="map-viewport" id="mapViewport">
+         <div class="svgContainer map-stage" id="mapStage">
+            <p class="svg-loading">Loading map…</p>
+         </div>
+      </div>
+      <div class="zoom-controls" aria-label="Map zoom">
+         <button type="button" class="zoom-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+         <button type="button" class="zoom-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
       </div>
       <ul class="authors">Authors:
          <li><a href="https://linktr.ee/ehhhahah">ehh hahah</a></li>
@@ -48,10 +65,122 @@
 
    <script src="../script.js"></script>
    <script>
-      (function loadWesolaSvg() {
-         const container = document.querySelector('.svgContainer');
+      // Page-local toggle so dummy.wav resolves against this origin (not <base href>).
+      function wesolaSampleDuration(soundId) {
+         var map = window.WESOLA_SAMPLE_DURATIONS || {};
+         var key = String(soundId);
+         if (map[key] != null) {
+            return map[key];
+         }
+         if (map[soundId] != null) {
+            return map[soundId];
+         }
+         return window.WESOLA_SAMPLE_DEFAULT_DURATION || 2;
+      }
+
+      function setWesolaPieceActive(piece, active, soundId) {
+         if (!piece) {
+            return;
+         }
+         if (!active) {
+            piece.classList.remove('piece-active');
+            piece.style.animationDuration = '';
+            return;
+         }
+         // Restart animation so the pulse begins with playback.
+         piece.classList.remove('piece-active');
+         piece.style.animationDuration = wesolaSampleDuration(soundId) + 's';
+         void piece.offsetWidth;
+         piece.classList.add('piece-active');
+      }
+
+      function playWesolaPiece(soundId) {
+         var soundIndex = soundId;
+         if (!ALL_AUDIOS[soundIndex]) {
+            var dummyUrl = new URL('sounds/dummy.wav', window.location.href).href;
+            var dummyModUrl = new URL('sounds/dummy_mod.wav', window.location.href).href;
+            ALL_AUDIOS[soundIndex] = {
+               id: soundIndex,
+               audio: [new Audio(dummyUrl), new Audio(dummyModUrl)],
+               is_playing: false
+            };
+         }
+
+         var entry = ALL_AUDIOS[soundIndex];
+         var piece = document.getElementsByClassName('piece' + soundId)[0];
+         if (entry.is_playing) {
+            entry.audio.forEach(function (audioObj) {
+               audioObj.pause();
+            });
+            entry.is_playing = false;
+            setWesolaPieceActive(piece, false, soundId);
+         } else {
+            entry.audio.forEach(function (audioObj) {
+               if (typeof setModAudioVolumeByZoom === 'function') {
+                  setModAudioVolumeByZoom();
+               }
+               audioObj.loop = true;
+               audioObj.play();
+            });
+            entry.is_playing = true;
+            setWesolaPieceActive(piece, true, soundId);
+         }
+      }
+
+      function wireWesolaPieces(svg) {
+         // Only piece-* layers are interactive; roads/trains/guides stay inert.
+         var decorative = svg.querySelectorAll(
+            '#layer-small, #layer-network-roads, #layer-network-trains, #layer-guide-rail-band'
+         );
+         for (var d = 0; d < decorative.length; d++) {
+            decorative[d].style.pointerEvents = 'none';
+         }
+
+         var pieces = svg.querySelectorAll('g[id^="layer-piece-"]');
+         for (var i = 0; i < pieces.length; i++) {
+            var g = pieces[i];
+            var match = g.id.match(/^layer-piece-(\d+)$/);
+            if (!match) {
+               continue;
+            }
+            var id = match[1];
+            g.classList.add('puzzle', 'piece' + id);
+         }
+
+         // Delegated click (survives pan/zoom pointer handling better than onclick=).
+         svg.addEventListener('click', function (event) {
+            var g = event.target.closest && event.target.closest('g[id^="layer-piece-"]');
+            if (!g || !g.classList.contains('puzzle')) {
+               return;
+            }
+            var match = g.id.match(/^layer-piece-(\d+)$/);
+            if (!match) {
+               return;
+            }
+            playWesolaPiece(Number(match[1]));
+         });
+      }
+
+      function initWesolaMapNavigator(viewport, container) {
+         if (typeof createWesolaMapNavigator !== 'function') {
+            return;
+         }
+         var navigator = createWesolaMapNavigator(viewport, container);
+         document.getElementById('zoomIn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            navigator.zoomIn();
+         });
+         document.getElementById('zoomOut').addEventListener('click', function (e) {
+            e.stopPropagation();
+            navigator.zoomOut();
+         });
+      }
+
+      function loadWesolaSvg() {
+         const container = document.getElementById('mapStage');
+         const viewport = document.getElementById('mapViewport');
          // Resolve against the page URL so local preview works despite <base href>
-         const svgUrl = new URL('wesola.svg', window.location.href);
+         const svgUrl = new URL('maps/wesola_layered.svg', window.location.href);
 
          fetch(svgUrl)
             .then(function (response) {
@@ -64,18 +193,50 @@
                container.innerHTML = svgText;
                const svg = container.querySelector('svg');
                if (!svg) {
-                  throw new Error('No <svg> root in wesola.svg');
+                  throw new Error('No <svg> root in wesola_layered.svg');
                }
                svg.id = 'svgmap';
+               // Crop 200px from the left (asymmetric art) without past the right edge.
+               var w = parseFloat(svg.getAttribute('width')) || 2048;
+               var h = parseFloat(svg.getAttribute('height')) || 2732;
+               var leftCrop = 200;
+               svg.setAttribute('viewBox', leftCrop + ' 0 ' + (w - leftCrop) + ' ' + h);
+               svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+               svg.setAttribute('width', '100%');
+               svg.removeAttribute('height');
+               wireWesolaPieces(svg);
                // Shared script.js looks up #svgmap at load time; refresh after inject
                if (typeof map !== 'undefined') {
                   map = svg;
                }
+
+               // Wait for layout after local CSS, then enable pan / zoom.
+               Promise.resolve(window.__wesolaStyleReady).then(function () {
+                  requestAnimationFrame(function () {
+                     requestAnimationFrame(function () {
+                        initWesolaMapNavigator(viewport, container);
+                     });
+                  });
+               });
             })
             .catch(function () {
                container.innerHTML =
-                  '<p class="svg-missing">Add <code>wesola/wesola.svg</code> here — this page loads it automatically.</p>';
+                  '<p class="svg-missing">Add <code>wesola/maps/wesola_layered.svg</code> here — this page loads it automatically.</p>';
             });
+      }
+
+      // Load page-local scripts against this origin (not <base href>), then the SVG.
+      (function () {
+         function loadScript(name, next) {
+            var s = document.createElement('script');
+            s.src = new URL(name, window.location.href).href;
+            s.onload = next;
+            s.onerror = next;
+            document.body.appendChild(s);
+         }
+         loadScript('sample-durations.js', function () {
+            loadScript('wesola-map.js', loadWesolaSvg);
+         });
       })();
    </script>
 </html>
