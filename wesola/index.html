@@ -31,14 +31,31 @@
       <link href="../assets/favicon_io/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
 
       <link rel="stylesheet" type="text/css" href="../global-style.css">
-      <link rel="stylesheet" type="text/css" href="/wesola/wesola-style.css">
+      <!-- Page-local assets: <base href> would otherwise pull production files -->
+      <script>
+         window.__wesolaStyleReady = new Promise(function (resolve) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = new URL('wesola-style.css', window.location.href).href;
+            link.onload = function () { resolve(); };
+            link.onerror = function () { resolve(); };
+            document.head.appendChild(link);
+         });
+      </script>
    </head>
 
    <body class="wesola-map">
-      <p class="subtle-info">Click any place on map to play a sound</p>
+      <p class="subtle-info">Click any place on map to play a sound<br/>Drag to move · use + / − to zoom</p>
       <h1 class="title"><a href="wesola/" style="text-decoration: none">BeatMap 2: Wesoła</a></h1>
-      <div class="svgContainer">
-         <p class="svg-loading">Loading map…</p>
+      <div class="map-viewport" id="mapViewport">
+         <div class="svgContainer map-stage" id="mapStage">
+            <p class="svg-loading">Loading map…</p>
+         </div>
+         <div class="zoom-controls" aria-label="Map zoom">
+            <button type="button" class="zoom-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+            <button type="button" class="zoom-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+         </div>
       </div>
       <ul class="authors">Authors:
          <li><a href="https://linktr.ee/ehhhahah">ehh hahah</a></li>
@@ -102,12 +119,40 @@
             }
             var id = match[1];
             g.classList.add('puzzle', 'piece' + id);
-            g.setAttribute('onclick', 'playWesolaPiece(' + id + ')');
          }
+
+         // Delegated click (survives pan/zoom pointer handling better than onclick=).
+         svg.addEventListener('click', function (event) {
+            var g = event.target.closest && event.target.closest('g[id^="layer-piece-"]');
+            if (!g || !g.classList.contains('puzzle')) {
+               return;
+            }
+            var match = g.id.match(/^layer-piece-(\d+)$/);
+            if (!match) {
+               return;
+            }
+            playWesolaPiece(Number(match[1]));
+         });
       }
 
-      (function loadWesolaSvg() {
-         const container = document.querySelector('.svgContainer');
+      function initWesolaMapNavigator(viewport, container) {
+         if (typeof createWesolaMapNavigator !== 'function') {
+            return;
+         }
+         var navigator = createWesolaMapNavigator(viewport, container);
+         document.getElementById('zoomIn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            navigator.zoomIn();
+         });
+         document.getElementById('zoomOut').addEventListener('click', function (e) {
+            e.stopPropagation();
+            navigator.zoomOut();
+         });
+      }
+
+      function loadWesolaSvg() {
+         const container = document.getElementById('mapStage');
+         const viewport = document.getElementById('mapViewport');
          // Resolve against the page URL so local preview works despite <base href>
          const svgUrl = new URL('maps/wesola_layered.svg', window.location.href);
 
@@ -139,11 +184,29 @@
                if (typeof map !== 'undefined') {
                   map = svg;
                }
+
+               // Wait for layout after local CSS, then enable pan / zoom.
+               Promise.resolve(window.__wesolaStyleReady).then(function () {
+                  requestAnimationFrame(function () {
+                     requestAnimationFrame(function () {
+                        initWesolaMapNavigator(viewport, container);
+                     });
+                  });
+               });
             })
             .catch(function () {
                container.innerHTML =
                   '<p class="svg-missing">Add <code>wesola/maps/wesola_layered.svg</code> here — this page loads it automatically.</p>';
             });
+      }
+
+      // Load pan/zoom helper against this origin (not <base href>), then the SVG.
+      (function () {
+         var script = document.createElement('script');
+         script.src = new URL('wesola-map.js', window.location.href).href;
+         script.onload = loadWesolaSvg;
+         script.onerror = loadWesolaSvg;
+         document.body.appendChild(script);
       })();
    </script>
 </html>

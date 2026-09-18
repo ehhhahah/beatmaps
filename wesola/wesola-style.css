@@ -83,17 +83,95 @@ g {
     font-style: italic;
 }
 
-/* Fit map to viewport width; global .svgContainer is fit-content (2048px SVG). */
-.wesola-map .svgContainer {
-    width: 100%;
+/* Map window: clips zoomed content; stage is translated/scaled inside. */
+.wesola-map .map-viewport {
+    position: relative;
+    width: calc(100% - 1.5rem);
     max-width: 100%;
     box-sizing: border-box;
-    padding: 0 0.75rem;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.wesola-map .map-viewport.is-panning {
+    cursor: grabbing;
+}
+
+.wesola-map .map-viewport.is-zoomed {
+    cursor: grab;
+}
+
+.wesola-map .map-stage {
+    display: block;
+    width: 100%;
+    max-width: none; /* allow zoom-in wider than the viewport */
+    height: auto;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    transform-origin: 0 0;
+    will-change: transform, width;
 }
 
 .wesola-map #svgmap {
     width: 100%;
-    max-width: 100%;
+    max-width: none;
     height: auto;
     display: block;
+    pointer-events: auto;
+}
+
+/* Pieces stay clickable above the grab cursor of the viewport */
+.wesola-map .map-viewport .puzzle,
+.wesola-map .map-viewport .puzzle path {
+    cursor: pointer;
+}
+
+/* OSM / Google Maps–style zoom stack — fixed so it stays on-screen on tall maps */
+.wesola-map .zoom-controls {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    border: 1.5px solid var(--wesola-ink);
+    border-radius: 3px;
+    overflow: hidden;
+    background: rgba(232, 246, 240, 0.92);
+    box-shadow: 0 1px 4px rgba(26, 61, 52, 0.18);
+}
+
+.wesola-map .zoom-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-bottom: 1.5px solid var(--wesola-ink);
+    background: transparent;
+    color: var(--wesola-ink);
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.wesola-map .zoom-btn:last-child {
+    border-bottom: none;
+}
+
+.wesola-map .zoom-btn:hover {
+    background: var(--wesola-hover);
+}
+
+.wesola-map .zoom-btn:active {
+    background: var(--wesola-accent);
+    color: white;
 }
