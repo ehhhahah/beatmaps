@@ -87,6 +87,7 @@ g {
 .wesola-map .map-viewport {
     position: relative;
     width: 700px;
+    max-width: 100%;
     box-sizing: border-box;
     margin: 0 auto;
     padding: 0;
