@@ -69,7 +69,7 @@ g {
 .piece-active {
     opacity: 30%;
     animation-name: activeAnimation;
-    animation-duration: 2s;
+    animation-duration: 2s; /* fallback; playWesolaPiece sets per-sample length */
     animation-iteration-count: infinite;
 }
 
@@ -83,11 +83,11 @@ g {
     font-style: italic;
 }
 
-/* Map window: clips zoomed content; stage is translated/scaled inside. */
+/* Map window: default 700px wide; clips zoomed content. */
 .wesola-map .map-viewport {
     position: relative;
-    width: calc(100% - 1.5rem);
-    max-width: 100%;
+    width: 700px;
+    max-width: calc(100% - 1.5rem);
     box-sizing: border-box;
     margin: 0 auto;
     padding: 0;
@@ -96,6 +96,15 @@ g {
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
+    /* Soft dissolve at edges (no hard clip line) */
+    -webkit-mask-image:
+        linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 36px), transparent),
+        linear-gradient(to bottom, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 36px), transparent),
+        linear-gradient(to bottom, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+    mask-composite: intersect;
 }
 
 .wesola-map .map-viewport.is-panning {

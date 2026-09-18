@@ -52,10 +52,10 @@
          <div class="svgContainer map-stage" id="mapStage">
             <p class="svg-loading">Loading map…</p>
          </div>
-         <div class="zoom-controls" aria-label="Map zoom">
-            <button type="button" class="zoom-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-            <button type="button" class="zoom-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
-         </div>
+      </div>
+      <div class="zoom-controls" aria-label="Map zoom">
+         <button type="button" class="zoom-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+         <button type="button" class="zoom-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
       </div>
       <ul class="authors">Authors:
          <li><a href="https://linktr.ee/ehhhahah">ehh hahah</a></li>
@@ -66,6 +66,34 @@
    <script src="../script.js"></script>
    <script>
       // Page-local toggle so dummy.wav resolves against this origin (not <base href>).
+      function wesolaSampleDuration(soundId) {
+         var map = window.WESOLA_SAMPLE_DURATIONS || {};
+         var key = String(soundId);
+         if (map[key] != null) {
+            return map[key];
+         }
+         if (map[soundId] != null) {
+            return map[soundId];
+         }
+         return window.WESOLA_SAMPLE_DEFAULT_DURATION || 2;
+      }
+
+      function setWesolaPieceActive(piece, active, soundId) {
+         if (!piece) {
+            return;
+         }
+         if (!active) {
+            piece.classList.remove('piece-active');
+            piece.style.animationDuration = '';
+            return;
+         }
+         // Restart animation so the pulse begins with playback.
+         piece.classList.remove('piece-active');
+         piece.style.animationDuration = wesolaSampleDuration(soundId) + 's';
+         void piece.offsetWidth;
+         piece.classList.add('piece-active');
+      }
+
       function playWesolaPiece(soundId) {
          var soundIndex = soundId;
          if (!ALL_AUDIOS[soundIndex]) {
@@ -79,11 +107,13 @@
          }
 
          var entry = ALL_AUDIOS[soundIndex];
+         var piece = document.getElementsByClassName('piece' + soundId)[0];
          if (entry.is_playing) {
             entry.audio.forEach(function (audioObj) {
                audioObj.pause();
             });
             entry.is_playing = false;
+            setWesolaPieceActive(piece, false, soundId);
          } else {
             entry.audio.forEach(function (audioObj) {
                if (typeof setModAudioVolumeByZoom === 'function') {
@@ -93,11 +123,7 @@
                audioObj.play();
             });
             entry.is_playing = true;
-         }
-
-         var piece = document.getElementsByClassName('piece' + soundId)[0];
-         if (piece) {
-            piece.classList.toggle('piece-active');
+            setWesolaPieceActive(piece, true, soundId);
          }
       }
 
@@ -170,12 +196,11 @@
                   throw new Error('No <svg> root in wesola_layered.svg');
                }
                svg.id = 'svgmap';
-               // Responsive: viewBox + width 100% so the map scales to the viewport
+               // Crop 200px from the left (asymmetric art) without past the right edge.
                var w = parseFloat(svg.getAttribute('width')) || 2048;
                var h = parseFloat(svg.getAttribute('height')) || 2732;
-               if (!svg.getAttribute('viewBox')) {
-                  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-               }
+               var leftCrop = 200;
+               svg.setAttribute('viewBox', leftCrop + ' 0 ' + (w - leftCrop) + ' ' + h);
                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
                svg.setAttribute('width', '100%');
                svg.removeAttribute('height');
@@ -200,13 +225,18 @@
             });
       }
 
-      // Load pan/zoom helper against this origin (not <base href>), then the SVG.
+      // Load page-local scripts against this origin (not <base href>), then the SVG.
       (function () {
-         var script = document.createElement('script');
-         script.src = new URL('wesola-map.js', window.location.href).href;
-         script.onload = loadWesolaSvg;
-         script.onerror = loadWesolaSvg;
-         document.body.appendChild(script);
+         function loadScript(name, next) {
+            var s = document.createElement('script');
+            s.src = new URL(name, window.location.href).href;
+            s.onload = next;
+            s.onerror = next;
+            document.body.appendChild(s);
+         }
+         loadScript('sample-durations.js', function () {
+            loadScript('wesola-map.js', loadWesolaSvg);
+         });
       })();
    </script>
 </html>
