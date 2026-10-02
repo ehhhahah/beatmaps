@@ -7,8 +7,9 @@
  * viewport covers the full page and the map is scaled to cover it
  * (title / credits stay pinned on top).
  *
- * Wheel over the map zooms toward the cursor. At scale 1, only zoom-in
- * (and trackpad pinch) is captured so the page can still scroll.
+ * Wheel over the map zooms toward the cursor. Two-finger pinch zooms on
+ * touch. At scale 1, only zoom-in is captured so the page can still scroll
+ * (wheel) / so a pinch-out starts cover zoom without a pinch-in hijack.
  */
 (function (global) {
   'use strict';
@@ -35,6 +36,11 @@
     var startClientY = 0;
     var originX = 0;
     var originY = 0;
+
+    // Two-finger pinch (touch events — simpler than multi-pointer bookkeeping).
+    var pinchStartDistance = 0;
+    var pinchStartScale = 1;
+    var pinchWasExpanded = false;
 
     function isExpanded() {
       return Math.abs(scale - 1) > 0.001;
@@ -223,11 +229,75 @@
       setScaleAround(scale * factor, focalX, focalY);
     }
 
+    function touchDistance(touches) {
+      var a = touches[0];
+      var b = touches[1];
+      return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY);
+    }
+
+    function touchMidpoint(touches) {
+      var a = touches[0];
+      var b = touches[1];
+      var rect = viewport.getBoundingClientRect();
+      return {
+        x: (a.clientX + b.clientX) / 2 - rect.left,
+        y: (a.clientY + b.clientY) / 2 - rect.top
+      };
+    }
+
+    function onTouchStart(event) {
+      if (event.touches.length !== 2) {
+        return;
+      }
+      pinchStartDistance = Math.max(1, touchDistance(event.touches));
+      pinchStartScale = scale;
+      pinchWasExpanded = isExpanded();
+      // Swallow the following click so pieces don't toggle after a pinch.
+      didDrag = true;
+      pointerActive = false;
+      pointerId = null;
+    }
+
+    function onTouchMove(event) {
+      if (event.touches.length !== 2 || !pinchStartDistance) {
+        return;
+      }
+      event.preventDefault();
+
+      var distance = Math.max(1, touchDistance(event.touches));
+      var nextScale = pinchStartScale * (distance / pinchStartDistance);
+
+      // Resting frame: only pinch-out (zoom in) starts cover mode.
+      if (!isExpanded() && nextScale <= pinchStartScale) {
+        return;
+      }
+
+      var mid = touchMidpoint(event.touches);
+      setScaleAround(nextScale, mid.x, mid.y);
+
+      // After expand/collapse the viewport layout jumps — re-base the gesture.
+      if (pinchWasExpanded !== isExpanded()) {
+        pinchStartDistance = distance;
+        pinchStartScale = scale;
+        pinchWasExpanded = isExpanded();
+      }
+    }
+
+    function onTouchEnd(event) {
+      if (event.touches.length < 2) {
+        pinchStartDistance = 0;
+      }
+    }
+
     function onPointerDown(event) {
       if (event.button !== undefined && event.button !== 0) {
         return;
       }
       if (event.target.closest && event.target.closest('.zoom-controls')) {
+        return;
+      }
+      // Two-finger pinch is owned by touch handlers.
+      if (event.pointerType === 'touch' && pinchStartDistance) {
         return;
       }
       pointerActive = true;
@@ -241,7 +311,7 @@
     }
 
     function onPointerMove(event) {
-      if (!pointerActive || event.pointerId !== pointerId) {
+      if (!pointerActive || event.pointerId !== pointerId || pinchStartDistance) {
         return;
       }
       var dx = event.clientX - startClientX;
@@ -323,6 +393,10 @@
       viewport.addEventListener('pointermove', onPointerMove);
       viewport.addEventListener('pointerup', onPointerUp);
       viewport.addEventListener('pointercancel', onPointerUp);
+      viewport.addEventListener('touchstart', onTouchStart, { passive: true });
+      viewport.addEventListener('touchmove', onTouchMove, { passive: false });
+      viewport.addEventListener('touchend', onTouchEnd);
+      viewport.addEventListener('touchcancel', onTouchEnd);
       // Capture on viewport so we see the click even if it targets a path.
       viewport.addEventListener('click', onClickCapture, true);
       // passive: false so preventDefault can stop page scroll while zooming.
