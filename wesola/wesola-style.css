@@ -83,13 +83,22 @@ g {
     font-style: italic;
 }
 
-/* Map window: default 700px wide; clips zoomed content. */
-.wesola-map .map-viewport {
+/* Resting frame: keeps open-page layout; reserves height when viewport goes fullscreen. */
+.wesola-map .map-shell {
     position: relative;
     width: 700px;
     max-width: 100%;
     box-sizing: border-box;
     margin: 0 auto;
+}
+
+/* Map window: clips zoomed content. Open look matches shell width. */
+.wesola-map .map-viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0;
     padding: 0;
     overflow: hidden;
     touch-action: none;
@@ -113,6 +122,19 @@ g {
 
 .wesola-map .map-viewport.is-zoomed {
     cursor: grab;
+}
+
+/* On zoom: cover the full page; chrome is pinned above. */
+.wesola-map .map-viewport.is-expanded {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+    z-index: 2;
+    -webkit-mask-image: none;
+    mask-image: none;
 }
 
 .wesola-map .map-stage {
