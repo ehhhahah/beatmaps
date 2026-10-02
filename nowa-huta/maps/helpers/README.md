@@ -63,4 +63,4 @@ Reads `nowa-huta/maps/mapa_inkscaped_manual_cut.svg`, writes `new_map_parsed.svg
 
 ## Wesoła and other maps
 
-Same pattern applies: per-map `SOUNDS_DATA`, credits HTML, and `sounds/{id}…` files. Wesoła has no `_mod` layer or zoom slider — a future helper can emit one row per segment instead of ↑/↓ pairs (copy-paste from this script is fine).
+Wesoła uses `wesola/maps/helpers/credits_organizer.py` (one row per segment, no `_mod`). See `wesola/maps/helpers/README.md`.

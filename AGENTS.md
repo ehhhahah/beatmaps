@@ -45,9 +45,10 @@ Wesoła notes:
 
 - URL slug is `wesola` (ASCII `l`, not `ł`).
 - Mint / green palette in `wesola/wesola-style.css` (contrast to Nowa Huta yellow / red).
-- Map SVG is loaded from `wesola/wesola.svg` (not inlined). Replace that file with the segmented workshop SVG; interactive groups still use `class="puzzle pieceN"` and `onclick="playSound('wesola/', N)"`.
-- No zoom slider; reuse `script.js` without RangeTouch / crossfade UI.
-- Working maps / helpers live under `wesola/maps/`. Size split: `wesola/maps/helpers/layer_by_size.py`. Spatial refine (absorb nearby flecks, optional roads/trains clip of former piece-0): `wesola/maps/helpers/refine_layers.py`. Keep `wesola_layered_v1.svg` as pre-refine backup when iterating.
+- Live map SVG: `wesola/maps/wesola_layered.svg` (fetched by `index.html`). Interactive groups use `id="layer-piece-N"`; `index.html` adds `puzzle` / `pieceN` and `playWesolaPiece(N)` (single loop per segment, no `_mod`).
+- Credits: `wesola/credits.html`; table rows from `wesola/maps/helpers/credits_organizer.py` (see `wesola/maps/helpers/README.md`). Footer authors on `index.html` are manual.
+- Pan/zoom map chrome in `wesola-map.js`; audio still uses shared `script.js` patterns without RangeTouch / zoom crossfade.
+- Working maps / helpers live under `wesola/maps/`. Size split: `wesola/maps/helpers/layer_by_size.py`. Spatial refine: `wesola/maps/helpers/refine_layers.py`. Keep `wesola_layered_v1.svg` as pre-refine backup when iterating.
 
 ## SVG workflow (important)
 

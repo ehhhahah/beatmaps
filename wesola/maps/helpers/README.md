@@ -1,0 +1,53 @@
+# Wesoła map helpers
+
+Production prep for BeatMap 2. Nothing here runs in the browser.
+
+## Credits and sound attribution
+
+| Surface | File | Contents |
+|---------|------|----------|
+| Sound table | [`wesola/credits.html`](../../credits.html) | Per piece ID: author, sample name, audio preview |
+| Workshop names | [`wesola/index.html`](../../index.html) footer (`.authors`) | Manual list |
+
+Unlike Nowa Huta, Wesoła uses **one audio file per segment** (no `_mod`, no ↑/↓ rows). Piece IDs match SVG groups `layer-piece-N` (currently **1–70**, with **40** absent after layer refinement). Clicks are wired in `index.html` via `playWesolaPiece(N)`.
+
+### `credits_organizer.py`
+
+**Data model** — `SOUNDS_DATA[id]` is `[author, sample_name]`.
+
+**Generate table rows** (IDs auto-detected from the live layered SVG):
+
+```bash
+# from repository root
+python3 wesola/maps/helpers/credits_organizer.py
+```
+
+Output: [`credits_table.html`](credits_table.html) — `<tr>…</tr>` fragments only.
+
+**Options**
+
+```bash
+# different SVG export
+python3 wesola/maps/helpers/credits_organizer.py --svg wesola/maps/wesola.svg
+
+# fixed ID list (no SVG scan)
+python3 wesola/maps/helpers/credits_organizer.py --ids 1,2,3,5
+```
+
+**Publish**
+
+1. Fill in `SOUNDS_DATA` in `credits_organizer.py` (re-run the script).
+2. Open `wesola/credits.html`.
+3. Replace the table body rows (keep the header: ID / Author / Name / Audio file).
+4. Add `{id}.wav` under `wesola/sounds/` for each credited segment (until then, previews 404 except dummy placeholders used locally).
+
+Preview URLs in generated HTML use `https://beatmaps.pages.dev/wesola/sounds/{id}.wav` so audio works on the deployed site.
+
+### Other helpers
+
+- [`layer_by_size.py`](layer_by_size.py) — initial Inkscape layer split by path size.
+- [`refine_layers.py`](refine_layers.py) — absorb flecks, optional road/rail clip (see script docstring).
+
+## Nowa Huta equivalent
+
+Dual-layer credits (↑ / ↓) live under `nowa-huta/maps/helpers/inkscape_organizer.py` — see [`nowa-huta/maps/helpers/README.md`](../../nowa-huta/maps/helpers/README.md).
