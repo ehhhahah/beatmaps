@@ -92,8 +92,6 @@ function slide(slideInput) {
     scale.setScale(slideInput/100, slideInput/100);
 
     ZOOM_POSITION = 1 - ((slideInput - 25) / 200)
-    console.log(ZOOM_POSITION)
-    document.getElementById("debug").innerText += " " + ZOOM_POSITION
 
     // apply the transformations by appending the SVGTransform objects to the SVGTransformList associated with the element
     tfmList.clear()
