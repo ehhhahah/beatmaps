@@ -32,7 +32,7 @@ BeatMaps is a **workshop series** artifact, not a product SPA. Workshop flow:
 - Zoom slider (`slide`): scales `#svgmap` and sets `ZOOM_POSITION`, crossfading volumes between the two layers via `setModAudioVolumeByZoom`.
 - RangeTouch CDN is used for better mobile range input (`rangetouch.js`).
 
-Segment IDs for Nowa Huta today: **0–21**. Credits live in `nowa-huta/credits.html` (↑ = base, ↓ = `_mod`).
+Segment IDs for Nowa Huta today: **0–21**. Credits live in `nowa-huta/credits.html` (↑ = base, ↓ = `_mod`); table rows are generated with `nowa-huta/maps/helpers/inkscape_organizer.py` (see `nowa-huta/maps/helpers/README.md`). Footer author names on `index.html` are manual.
 
 ## Maps timeline
 
