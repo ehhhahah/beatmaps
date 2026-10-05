@@ -49,6 +49,7 @@
          <li><a href="https://linktr.ee/ehhhahah">ehh hahah</a></li>
          <li><a href="https://yoxoko.wordpress.com/">Joanna Wabik</a></li>
       </ul>
+      <p class="authors">Commissioned by <a href="https://sacrumprofanum.com/program/beatmaps-warsztaty-dzwiekowe-dla-mlodziezy">Sacrum Profanum</a></p>
    </body>
 
    <script src="../script.js"></script>
@@ -57,8 +58,15 @@
    <script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
    <script>
+      /** Keep in sync with ``SOUND_EXT`` in ``maps/helpers/credits_organizer.py``. */
+      var WESOLA_SOUND_EXT = { 25: '.mp3', 29: '.mp3', 68: '.mp3' };
+
       function wesolaSoundsRoot() {
          return new URL('sounds/', window.location.href);
+      }
+
+      function wesolaFileExt(soundId) {
+         return WESOLA_SOUND_EXT[soundId] || '.wav';
       }
 
       /** Pre-create audio pair so playSound toggles without overwriting paths (page-local URLs). */
@@ -67,8 +75,9 @@
             return;
          }
          var root = wesolaSoundsRoot();
-         var near = new URL(String(soundId) + '.wav', root).href;
-         var far = new URL(String(soundId) + '_mod.wav', root).href;
+         var ext = wesolaFileExt(soundId);
+         var near = new URL(String(soundId) + ext, root).href;
+         var far = new URL(String(soundId) + '_mod' + ext, root).href;
          ALL_AUDIOS[soundId] = {
             id: soundId,
             audio: [new Audio(near), new Audio(far)],
@@ -78,7 +87,8 @@
 
       function playWesolaSound(soundId) {
          ensureWesolaAudio(soundId);
-         playSound('wesola/', soundId, '.wav', '.wav');
+         var ext = wesolaFileExt(soundId);
+         playSound('wesola/', soundId, ext, ext);
       }
 
       function wireWesolaPieces(svg) {
