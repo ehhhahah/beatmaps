@@ -31,10 +31,14 @@
       <link href="../assets/favicon_io/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
 
       <link rel="stylesheet" type="text/css" href="../global-style.css">
-      <link rel="stylesheet" type="text/css" href="/wesola/wesola-style.css">
+      <link rel="stylesheet" type="text/css" href="wesola-style.css" id="wesolaStyleSheet">
+      <script>
+         document.getElementById('wesolaStyleSheet').href =
+            new URL('wesola-style.css', window.location.href).href;
+      </script>
    </head>
 
-   <body>
+   <body class="wesola-beatmap">
       <div class="slidecontainer">
          <input type="range" class="custom slider" min="25" max="225" value="100" onchange="slide(this.value)">
       </div>
@@ -58,8 +62,8 @@
    <script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
    <script>
-      /** Keep in sync with ``SOUND_EXT`` in ``maps/helpers/credits_organizer.py``. */
-      var WESOLA_SOUND_EXT = { 25: '.mp3', 29: '.mp3', 68: '.mp3' };
+      /** Keep in sync with ``SOUNDS_DATA`` / ``SOUND_EXT`` in ``maps/helpers/credits_organizer.py``. */
+      var WESOLA_SOUND_EXT = { 25: '.mp3', 29: '.mp3', 68: '.mp3', 85: '.wav' };
 
       function wesolaSoundsRoot() {
          return new URL('sounds/', window.location.href);
@@ -67,6 +71,10 @@
 
       function wesolaFileExt(soundId) {
          return WESOLA_SOUND_EXT[soundId] || '.wav';
+      }
+
+      function wesolaIsPlayable(soundId) {
+         return Object.prototype.hasOwnProperty.call(WESOLA_SOUND_EXT, soundId);
       }
 
       /** Pre-create audio pair so playSound toggles without overwriting paths (page-local URLs). */
@@ -107,6 +115,15 @@
                continue;
             }
             var id = match[1];
+            // Strip inline fill so g / .puzzle CSS fills apply (Nowa Huta model).
+            var paths = g.querySelectorAll('path');
+            for (var j = 0; j < paths.length; j++) {
+               paths[j].removeAttribute('fill');
+            }
+            // Only pieces with sounds are .puzzle (ink); others stay black / not-allowed.
+            if (!wesolaIsPlayable(id)) {
+               continue;
+            }
             g.classList.add('puzzle', 'piece' + id);
             g.setAttribute('onclick', "playWesolaSound(" + id + ")");
          }
@@ -138,8 +155,17 @@
                if (typeof map !== 'undefined') {
                   map = svg;
                }
-               if (typeof RangeTouch !== 'undefined' && document.querySelector('input[type="range"]')) {
-                  new RangeTouch('input[type="range"]');
+               var styleLink = document.getElementById('wesolaStyleSheet');
+               function initWesolaRangeTouch() {
+                  if (typeof RangeTouch !== 'undefined' && document.querySelector('input[type="range"]')) {
+                     new RangeTouch('input[type="range"]');
+                  }
+               }
+               if (!styleLink || styleLink.sheet) {
+                  initWesolaRangeTouch();
+               } else {
+                  styleLink.addEventListener('load', initWesolaRangeTouch);
+                  styleLink.addEventListener('error', initWesolaRangeTouch);
                }
             })
             .catch(function () {

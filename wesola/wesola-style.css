@@ -8,8 +8,8 @@
     --wesola-accent-deep: #1a6b54;
     --wesola-accent-bright: #3ecf9a;
     --wesola-hover: #b8e0d0;
-    --wesola-pulse-a: #1a8f6e;
-    --wesola-pulse-b: #5ee0b0;
+    --wesola-pulse-a: #1db88a;
+    --wesola-pulse-b: #7dffc8;
 }
 
 body {
@@ -37,21 +37,19 @@ a:hover {
     background: var(--wesola-accent);
 }
 
+/* Clickable segments (Nowa Huta: .puzzle → #ff0000). */
 .puzzle {
-    background-color: var(--wesola-ink);
+    background-color: black;
     color: white;
-    fill: var(--wesola-accent);
+    fill: var(--wesola-ink);
     text-align: center;
     text-justify: auto;
     cursor: pointer;
 }
 
-.puzzle path {
-    cursor: pointer;
-}
-
+/* Non-clickable geometry (Nowa Huta: g → #aa0000). */
 g {
-    fill: var(--wesola-accent-deep);
+    fill: #000000;
     cursor: not-allowed;
 }
 
@@ -82,30 +80,31 @@ g {
     font-style: italic;
 }
 
-input[type=range] {
+body.wesola-beatmap input[type=range] {
     accent-color: var(--wesola-accent);
+    background: transparent;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
+body.wesola-beatmap input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     cursor: pointer;
-    background-color: var(--wesola-hover);
+    background-color: var(--wesola-hover) !important;
     border: 1px solid var(--wesola-accent-deep);
 }
 
-input[type=range]::-webkit-slider-thumb {
+body.wesola-beatmap input[type=range]::-webkit-slider-thumb {
     height: 50px;
     width: 50px;
     margin-top: 0;
     border-radius: 21px;
-    background: var(--wesola-accent);
+    background: var(--wesola-accent) !important;
     border: 2px solid var(--wesola-accent-deep);
     cursor: pointer;
     -webkit-appearance: none;
     box-shadow: 0 1px 4px rgba(26, 61, 52, 0.25);
 }
 
-input[type=range]::-moz-range-track {
+body.wesola-beatmap input[type=range]::-moz-range-track {
     width: 100%;
     cursor: pointer;
     background-color: var(--wesola-hover);
@@ -114,7 +113,7 @@ input[type=range]::-moz-range-track {
     border-radius: 0;
 }
 
-input[type=range]::-moz-range-thumb {
+body.wesola-beatmap input[type=range]::-moz-range-thumb {
     height: 50px;
     width: 50px;
     border-radius: 21px;

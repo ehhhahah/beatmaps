@@ -17,10 +17,14 @@
       <link href="../assets/favicon_io/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
 
       <link rel="stylesheet" type="text/css" href="../global-style.css">
-      <link rel="stylesheet" type="text/css" href="/wesola/wesola-style.css">
+      <link rel="stylesheet" type="text/css" href="wesola-style.css" id="wesolaStyleSheet">
+      <script>
+         document.getElementById('wesolaStyleSheet').href =
+            new URL('wesola-style.css', window.location.href).href;
+      </script>
    </head>
 
-   <body class="wesola-map">
+   <body class="wesola-beatmap">
       <p class="subtle-info"><a href="wesola/index.html">Return to app page</a></p>
       <h1 class="title"><a href="wesola/index.html">BeatMap 2: Wesoła</a></h1>
       <p class="subtle-info">One row per map segment. Regenerate rows with <code>wesola/maps/helpers/credits_organizer.py</code> (see <code>wesola/maps/helpers/README.md</code>).</p>
