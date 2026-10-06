@@ -23,7 +23,9 @@
       <meta property="twitter:description" content="Web musical app made to present sounds of Wesoła.">
 
       <!-- technical meta -->
-      <meta content="width=device-width, initial-scale=1" name="viewport"/>
+      <!-- width=1700 matches the SVG: phones scale the whole page to fit (map fills
+           viewport; text CSS unchanged). -->
+      <meta content="width=1700" name="viewport"/>
       <base href="https://beatmaps.pages.dev/">
       <meta charset="utf-8"/>
       <link href="../assets/favicon_io/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
@@ -132,6 +134,7 @@
       function loadWesolaSvg() {
          var container = document.getElementById('svgContainer');
          var svgUrl = new URL('maps/wesola_layered.svg', window.location.href);
+         svgUrl.searchParams.set('v', '400-90');
 
          fetch(svgUrl)
             .then(function (response) {
@@ -148,9 +151,12 @@
                }
                svg.id = 'svgmap';
                svg.setAttribute('transform', 'scale(1)');
+               // Crop empty canvas (mainly left/top) so ink fills the frame.
+               svg.setAttribute('viewBox', '400 90 1648 2642');
+               // Same fixed CSS size model as Nowa Huta.
                svg.setAttribute('width', '1700px');
-               svg.setAttribute('height', 'auto');
-               svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+               svg.setAttribute('height', '2725px');
+               svg.removeAttribute('preserveAspectRatio');
                wireWesolaPieces(svg);
                if (typeof map !== 'undefined') {
                   map = svg;
