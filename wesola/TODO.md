@@ -5,3 +5,4 @@
 - Autorzy trochę wyżej na komputerze
 - Na komputerze mapka na start mniejsza
 - Powrzucać sensowne dźwięki na start
+- Podział mapki wygenerować na nowo, ustawić ID zgodne z tym co na mapie
