@@ -1,0 +1,7 @@
+- Usunąć slider
+- Mniejsze drogi nie będą klikalne
+- Żeby się dało oddalić na touchpadzie komputera
+- Usunąć [Move the slider above to zoom the map] i dać [Sacrum Profanum]
+- Autorzy trochę wyżej na komputerze
+- Na komputerze mapka na start mniejsza
+- Powrzucać sensowne dźwięki na start
