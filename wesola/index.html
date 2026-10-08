@@ -23,7 +23,9 @@
       <meta property="twitter:description" content="Web musical app made to present sounds of Wesoła.">
 
       <!-- technical meta -->
-      <meta content="width=device-width, initial-scale=1" name="viewport"/>
+      <!-- width=1700 matches the SVG: phones scale the whole page to fit (map fills
+           viewport; text CSS unchanged). -->
+      <meta content="width=1700" name="viewport"/>
       <base href="https://beatmaps.pages.dev/">
       <meta charset="utf-8"/>
       <link href="../assets/favicon_io/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
@@ -31,106 +33,75 @@
       <link href="../assets/favicon_io/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
 
       <link rel="stylesheet" type="text/css" href="../global-style.css">
-      <!-- Page-local assets: <base href> would otherwise pull production files -->
+      <link rel="stylesheet" type="text/css" href="wesola-style.css" id="wesolaStyleSheet">
       <script>
-         window.__wesolaStyleReady = new Promise(function (resolve) {
-            var link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.href = new URL('wesola-style.css', window.location.href).href;
-            link.onload = function () { resolve(); };
-            link.onerror = function () { resolve(); };
-            document.head.appendChild(link);
-         });
+         document.getElementById('wesolaStyleSheet').href =
+            new URL('wesola-style.css', window.location.href).href;
       </script>
    </head>
 
-   <body class="wesola-map">
-      <p class="subtle-info">Click a place on map to play a sound</p>
-      <h1 class="title"><a href="wesola/" style="text-decoration: none">BeatMap 2: Wesoła</a></h1>
-      <div class="map-shell" id="mapShell">
-         <div class="map-viewport" id="mapViewport">
-            <div class="svgContainer map-stage" id="mapStage">
-               <p class="svg-loading">Loading map…</p>
-            </div>
-         </div>
+   <body class="wesola-beatmap">
+      <div class="slidecontainer">
+         <input type="range" class="custom slider" min="25" max="225" value="100" onchange="slide(this.value)">
       </div>
-      <div class="zoom-controls" aria-label="Map zoom">
-         <button type="button" class="zoom-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-         <button type="button" class="zoom-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+      <br/>
+      <br/>
+      <p class="subtle-info">Click a place on map to play a sound <br/>Move the slider above to zoom the map <br/></p>
+      <h1 class="title"><a href="wesola/" style="text-decoration: none">BeatMap 2: Wesoła</a></h1>
+      <div class="svgContainer" id="svgContainer">
+         <p class="svg-loading">Loading map…</p>
       </div>
       <ul class="authors">Authors:
          <li><a href="https://linktr.ee/ehhhahah">ehh hahah</a></li>
          <li><a href="https://yoxoko.wordpress.com/">Joanna Wabik</a></li>
       </ul>
+      <p class="authors">Commissioned by <a href="https://sacrumprofanum.com/program/beatmaps-warsztaty-dzwiekowe-dla-mlodziezy">Sacrum Profanum</a></p>
    </body>
 
    <script src="../script.js"></script>
+   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+   <script type="text/javascript" src="https://cdn.rawgit.com/dwyl/range-touch/master/range-touch.min.js"></script>
+   <script src="https://cdn.rangetouch.com/2.0.1/rangetouch.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
    <script>
-      // Page-local toggle so dummy.wav resolves against this origin (not <base href>).
-      function wesolaSampleDuration(soundId) {
-         var map = window.WESOLA_SAMPLE_DURATIONS || {};
-         var key = String(soundId);
-         if (map[key] != null) {
-            return map[key];
-         }
-         if (map[soundId] != null) {
-            return map[soundId];
-         }
-         return window.WESOLA_SAMPLE_DEFAULT_DURATION || 2;
+      /** Keep in sync with ``SOUNDS_DATA`` / ``SOUND_EXT`` in ``maps/helpers/credits_organizer.py``. */
+      var WESOLA_SOUND_EXT = { 25: '.mp3', 29: '.mp3', 68: '.mp3', 85: '.wav' };
+
+      function wesolaSoundsRoot() {
+         return new URL('sounds/', window.location.href);
       }
 
-      function setWesolaPieceActive(piece, active, soundId) {
-         if (!piece) {
-            return;
-         }
-         if (!active) {
-            piece.classList.remove('piece-active');
-            piece.style.animationDuration = '';
-            return;
-         }
-         // Restart animation so the pulse begins with playback.
-         piece.classList.remove('piece-active');
-         piece.style.animationDuration = wesolaSampleDuration(soundId) + 's';
-         void piece.offsetWidth;
-         piece.classList.add('piece-active');
+      function wesolaFileExt(soundId) {
+         return WESOLA_SOUND_EXT[soundId] || '.wav';
       }
 
-      function playWesolaPiece(soundId) {
-         var soundIndex = soundId;
-         if (!ALL_AUDIOS[soundIndex]) {
-            var dummyUrl = new URL('sounds/dummy.wav', window.location.href).href;
-            var dummyModUrl = new URL('sounds/dummy_mod.wav', window.location.href).href;
-            ALL_AUDIOS[soundIndex] = {
-               id: soundIndex,
-               audio: [new Audio(dummyUrl), new Audio(dummyModUrl)],
-               is_playing: false
-            };
-         }
+      function wesolaIsPlayable(soundId) {
+         return Object.prototype.hasOwnProperty.call(WESOLA_SOUND_EXT, soundId);
+      }
 
-         var entry = ALL_AUDIOS[soundIndex];
-         var piece = document.getElementsByClassName('piece' + soundId)[0];
-         if (entry.is_playing) {
-            entry.audio.forEach(function (audioObj) {
-               audioObj.pause();
-            });
-            entry.is_playing = false;
-            setWesolaPieceActive(piece, false, soundId);
-         } else {
-            entry.audio.forEach(function (audioObj) {
-               if (typeof setModAudioVolumeByZoom === 'function') {
-                  setModAudioVolumeByZoom();
-               }
-               audioObj.loop = true;
-               audioObj.play();
-            });
-            entry.is_playing = true;
-            setWesolaPieceActive(piece, true, soundId);
+      /** Pre-create audio pair so playSound toggles without overwriting paths (page-local URLs). */
+      function ensureWesolaAudio(soundId) {
+         if (ALL_AUDIOS[soundId]) {
+            return;
          }
+         var root = wesolaSoundsRoot();
+         var ext = wesolaFileExt(soundId);
+         var near = new URL(String(soundId) + ext, root).href;
+         var far = new URL(String(soundId) + '_mod' + ext, root).href;
+         ALL_AUDIOS[soundId] = {
+            id: soundId,
+            audio: [new Audio(near), new Audio(far)],
+            is_playing: false
+         };
+      }
+
+      function playWesolaSound(soundId) {
+         ensureWesolaAudio(soundId);
+         var ext = wesolaFileExt(soundId);
+         playSound('wesola/', soundId, ext, ext);
       }
 
       function wireWesolaPieces(svg) {
-         // Only piece-* layers are interactive; roads/trains/guides stay inert.
          var decorative = svg.querySelectorAll(
             '#layer-small, #layer-network-roads, #layer-network-trains, #layer-guide-rail-band'
          );
@@ -146,43 +117,24 @@
                continue;
             }
             var id = match[1];
+            // Strip inline fill so g / .puzzle CSS fills apply (Nowa Huta model).
+            var paths = g.querySelectorAll('path');
+            for (var j = 0; j < paths.length; j++) {
+               paths[j].removeAttribute('fill');
+            }
+            // Only pieces with sounds are .puzzle (ink); others stay black / not-allowed.
+            if (!wesolaIsPlayable(id)) {
+               continue;
+            }
             g.classList.add('puzzle', 'piece' + id);
+            g.setAttribute('onclick', "playWesolaSound(" + id + ")");
          }
-
-         // Delegated click (survives pan/zoom pointer handling better than onclick=).
-         svg.addEventListener('click', function (event) {
-            var g = event.target.closest && event.target.closest('g[id^="layer-piece-"]');
-            if (!g || !g.classList.contains('puzzle')) {
-               return;
-            }
-            var match = g.id.match(/^layer-piece-(\d+)$/);
-            if (!match) {
-               return;
-            }
-            playWesolaPiece(Number(match[1]));
-         });
-      }
-
-      function initWesolaMapNavigator(viewport, container) {
-         if (typeof createWesolaMapNavigator !== 'function') {
-            return;
-         }
-         var navigator = createWesolaMapNavigator(viewport, container);
-         document.getElementById('zoomIn').addEventListener('click', function (e) {
-            e.stopPropagation();
-            navigator.zoomIn();
-         });
-         document.getElementById('zoomOut').addEventListener('click', function (e) {
-            e.stopPropagation();
-            navigator.zoomOut();
-         });
       }
 
       function loadWesolaSvg() {
-         const container = document.getElementById('mapStage');
-         const viewport = document.getElementById('mapViewport');
-         // Resolve against the page URL so local preview works despite <base href>
-         const svgUrl = new URL('maps/wesola_layered.svg', window.location.href);
+         var container = document.getElementById('svgContainer');
+         var svgUrl = new URL('maps/wesola_layered.svg', window.location.href);
+         svgUrl.searchParams.set('v', '400-90');
 
          fetch(svgUrl)
             .then(function (response) {
@@ -193,33 +145,34 @@
             })
             .then(function (svgText) {
                container.innerHTML = svgText;
-               const svg = container.querySelector('svg');
+               var svg = container.querySelector('svg');
                if (!svg) {
                   throw new Error('No <svg> root in wesola_layered.svg');
                }
                svg.id = 'svgmap';
-               // Crop 200px from the left (asymmetric art) without past the right edge.
-               var w = parseFloat(svg.getAttribute('width')) || 2048;
-               var h = parseFloat(svg.getAttribute('height')) || 2732;
-               var leftCrop = 200;
-               svg.setAttribute('viewBox', leftCrop + ' 0 ' + (w - leftCrop) + ' ' + h);
-               svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-               svg.setAttribute('width', '100%');
-               svg.removeAttribute('height');
+               svg.setAttribute('transform', 'scale(1)');
+               // Crop empty canvas (mainly left/top) so ink fills the frame.
+               svg.setAttribute('viewBox', '400 90 1648 2642');
+               // Same fixed CSS size model as Nowa Huta.
+               svg.setAttribute('width', '1700px');
+               svg.setAttribute('height', '2725px');
+               svg.removeAttribute('preserveAspectRatio');
                wireWesolaPieces(svg);
-               // Shared script.js looks up #svgmap at load time; refresh after inject
                if (typeof map !== 'undefined') {
                   map = svg;
                }
-
-               // Wait for layout after local CSS, then enable pan / zoom.
-               Promise.resolve(window.__wesolaStyleReady).then(function () {
-                  requestAnimationFrame(function () {
-                     requestAnimationFrame(function () {
-                        initWesolaMapNavigator(viewport, container);
-                     });
-                  });
-               });
+               var styleLink = document.getElementById('wesolaStyleSheet');
+               function initWesolaRangeTouch() {
+                  if (typeof RangeTouch !== 'undefined' && document.querySelector('input[type="range"]')) {
+                     new RangeTouch('input[type="range"]');
+                  }
+               }
+               if (!styleLink || styleLink.sheet) {
+                  initWesolaRangeTouch();
+               } else {
+                  styleLink.addEventListener('load', initWesolaRangeTouch);
+                  styleLink.addEventListener('error', initWesolaRangeTouch);
+               }
             })
             .catch(function () {
                container.innerHTML =
@@ -227,18 +180,6 @@
             });
       }
 
-      // Load page-local scripts against this origin (not <base href>), then the SVG.
-      (function () {
-         function loadScript(name, next) {
-            var s = document.createElement('script');
-            s.src = new URL(name, window.location.href).href;
-            s.onload = next;
-            s.onerror = next;
-            document.body.appendChild(s);
-         }
-         loadScript('sample-durations.js', function () {
-            loadScript('wesola-map.js', loadWesolaSvg);
-         });
-      })();
+      loadWesolaSvg();
    </script>
 </html>
