@@ -122,3 +122,11 @@ body.wesola-beatmap input[type=range]::-moz-range-thumb {
     cursor: pointer;
     box-shadow: 0 1px 4px rgba(26, 61, 52, 0.25);
 }
+
+
+@media (min-width: 900px) {
+    #svgmap {
+        width: min(1200px, 100%) !important;
+        height: auto !important;
+    }
+}
