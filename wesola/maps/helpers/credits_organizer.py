@@ -31,8 +31,8 @@ AUDIO_EXT = ".wav"
 SOUNDS_DATA: dict[int, list[str]] = {
     # Example:
     # 1: ["Ania", "ptaki nad torami"],
-    125: ["ehh hahah", "Klakson z Warszawy"],
     4: ["ehh hahah", "Przystanek Tauron Arena Wieczysta"],
+    125: ["ehh hahah", "Klakson z Warszawy"],
 
 }
 
