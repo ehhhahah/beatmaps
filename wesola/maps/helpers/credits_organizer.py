@@ -31,17 +31,13 @@ AUDIO_EXT = ".wav"
 SOUNDS_DATA: dict[int, list[str]] = {
     # Example:
     # 1: ["Ania", "ptaki nad torami"],
-    25: ["Wojtek", "Button 1"],
-    29: ["Wojtek", "Button 2"],
-    68: ["Wojtek", "Button 3"],
-    85: ["Wojtek", "Button 4"],
+    125: ["ehh hahah", "Klakson z Warszawy"],
+    4: ["ehh hahah", "Przystanek Tauron Arena Wieczysta"],
+
 }
 
 # Override when files are not .wav (default matches ``AUDIO_EXT``).
 SOUND_EXT: dict[int, str] = {
-    25: ".mp3",
-    29: ".mp3",
-    68: ".mp3",
 }
 
 HELPERS_DIR = Path(__file__).resolve().parent
