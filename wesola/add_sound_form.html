@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pl">
+   <head>
+      <meta charset="utf-8"/>
+      <meta content="width=device-width, initial-scale=1" name="viewport"/>
+      <title>BeatMap 2: Wesoła — dodaj dźwięk</title>
+      <meta name="robots" content="noindex">
+
+      <!-- ten plik leży w wesola/add-sound/ -->
+      <link rel="stylesheet" type="text/css" href="../../global-style.css">
+      <link rel="stylesheet" type="text/css" href="../wesola-style.css">
+      <style>
+      /* Podstrona wesola/add-sound — bazuje na ../../global-style.css i ../wesola-style.css */
+
+      body.wesola-beatmap { overflow-x: hidden; }
+
+      .add-sound {
+          display: flex;
+          min-height: 100vh;
+          text-align: left;
+      }
+
+      /* ---------- lewa połowa: mapa ---------- */
+      .map-pane {
+          flex: 0 0 50%;
+          width: 50%;
+          height: 100vh;
+          position: sticky;
+          top: 0;
+          box-sizing: border-box;
+          padding: 12px;
+          display: flex;
+          flex-direction: column;
+      }
+
+      .map-pane .svgContainer {
+          flex: 1 1 auto;
+          min-height: 0;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+      }
+
+      /* nadpisuje stałe wymiary / reguły #svgmap z wesola-style.css */
+      .map-pane #svgmap {
+          width: 100% !important;
+          height: 100% !important;
+          max-width: 100%;
+      }
+
+      .map-pane g { fill: initial; }                 /* wesola-style.css: g {fill:#000} — nie ruszamy kolorów SVG */
+      .map-pane g[id^="layer-piece-"] { cursor: pointer; transition: opacity .15s; }
+      .map-pane g[id^="layer-piece-"]:hover { opacity: .65; }
+      .map-pane g[id^="layer-piece-"] path { vector-effect: non-scaling-stroke; }
+
+      #svgmap.has-selection g[id^="layer-piece-"]:not(.area-selected) { opacity: .35; }
+      #svgmap.has-selection g[id^="layer-piece-"]:not(.area-selected):hover { opacity: .6; }
+      #svgmap g.area-selected path {
+          stroke: var(--wesola-ink);
+          stroke-width: 3px;
+          stroke-linejoin: round;
+      }
+
+      .map-hint {
+          margin: 6px 0 0;
+          font-size: .9rem;
+          font-style: italic;
+          opacity: .75;
+          text-align: center;
+          min-height: 1.3em;
+      }
+
+      /* ---------- prawa połowa: formularz ---------- */
+      .form-pane {
+          flex: 0 0 50%;
+          width: 50%;
+          box-sizing: border-box;
+          padding: 24px 40px 60px;
+      }
+
+      .form-pane h1.title { margin-bottom: 8px; text-align: left; }
+      .form-pane .subtle-info { margin: 0 0 24px; }
+
+      .field { margin: 0 0 22px; border: 0; padding: 0; }
+      .field > label, .field > legend {
+          display: block;
+          font-weight: bold;
+          margin-bottom: 6px;
+          padding: 0;
+      }
+      .field .opt { font-weight: normal; font-style: italic; opacity: .65; }
+      .field small { display: block; margin-top: 4px; opacity: .7; font-style: italic; }
+
+      .form-pane input[type=text],
+      .form-pane input[type=number],
+      .form-pane input[type=file],
+      .form-pane textarea {
+          box-sizing: border-box;
+          width: 100%;
+          font: inherit;
+          padding: 8px 10px;
+          color: var(--wesola-ink);
+          background: #ffffffaa;
+          border: 1px solid var(--wesola-accent-deep);
+          border-radius: 0;
+      }
+      .form-pane input:focus, .form-pane textarea:focus, .form-pane button:focus-visible {
+          outline: 2px solid var(--wesola-accent);
+          outline-offset: 1px;
+      }
+
+      /* przycisk-file */
+      .form-pane input[type=file]::file-selector-button {
+          font: inherit;
+          margin-right: 10px;
+          padding: 4px 12px;
+          /* color: white; */
+          background: var(--wesola-accent-deep);
+          border: 0;
+          cursor: pointer;
+      }
+
+      /* player + waveform */
+      .player { margin-top: 10px; display: none; }
+      .player.visible { display: block; }
+      .wave-wrap {
+          position: relative;
+          height: 96px;
+          background: #ffffff88;
+          border: 1px solid var(--wesola-accent-deep);
+          cursor: pointer;
+          touch-action: none;
+      }
+      .wave-wrap canvas { display: block; width: 100%; height: 100%; }
+      .wave-status {
+          position: absolute; inset: 0;
+          display: flex; align-items: center; justify-content: center;
+          font-style: italic; opacity: .7; pointer-events: none;
+      }
+      .player-bar { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+      .btn {
+          font: inherit;
+          padding: 8px 18px;
+          /* color: white; */
+          background: var(--wesola-accent-deep) !important;
+          border: 0;
+          cursor: pointer;
+      }
+      .btn:hover { background: var(--wesola-accent); }
+      .btn.secondary { color: var(--wesola-ink); background: var(--wesola-hover); }
+      .btn.secondary:hover { background: var(--wesola-accent-bright); }
+      .time { font-variant-numeric: tabular-nums; opacity: .8; }
+
+      /* wybór obszaru */
+      .area-row { display: flex; align-items: center; gap: 12px; }
+      .area-row input[type=number] { width: 7rem; }
+      .area-swatch {
+          width: 28px; height: 28px; border: 1px solid var(--wesola-ink);
+          background: transparent;
+      }
+
+      /* wynik */
+      .output { display: none; margin-top: 8px; }
+      .output.visible { display: block; }
+      .output textarea {
+          min-height: 5.5em;
+          font-family: ui-monospace, Menlo, Consolas, monospace;
+          font-size: .9rem;
+          resize: vertical;
+      }
+      .error { color: #a02020 !important; font-weight: bold; margin: 0 0 12px; min-height: 1.2em; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+      /* wąskie ekrany: mapa nad formularzem */
+      @media (max-width: 900px) {
+          .add-sound { flex-direction: column; }
+          .map-pane, .form-pane { flex-basis: auto; width: 100%; }
+          .map-pane { position: static; height: 80vh; }
+      }
+      </style>
+   </head>
+
+   <body class="wesola-beatmap">
+      <div class="add-sound">
+
+         <!-- LEWA POŁOWA: mapa -->
+         <section class="map-pane" aria-label="Mapa obszarów">
+            <div class="svgContainer" id="svgContainer">
+               <p class="svg-loading">Loading map…</p>
+            </div>
+            <p class="map-hint" id="mapHint">Kliknij obszar na mapie, aby go wybrać</p>
+         </section>
+
+         <!-- PRAWA POŁOWA: formularz -->
+         <section class="form-pane">
+            <h1 class="title"><a href="../" style="text-decoration: none">BeatMap 2: Wesoła</a> — dodaj dźwięk</h1>
+            <p class="subtle-info">Wypełnij formularz, a strona wygeneruje komendę.</p>
+
+            <form id="soundForm" novalidate>
+
+               <!-- 1. dźwięk -->
+               <div class="field">
+                  <label for="audioFile">1. Dźwięk</label>
+                  <input type="file" id="audioFile" accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a">
+
+                  <div class="player" id="player">
+                     <div class="wave-wrap" id="waveWrap" title="Kliknij, aby przewinąć">
+                        <canvas id="waveCanvas"></canvas>
+                        <div class="wave-status" id="waveStatus"></div>
+                     </div>
+                     <div class="player-bar">
+                        <button type="button" class="btn" id="playBtn">▶ Odtwórz</button>
+                        <span class="time" id="timeLabel">0:00 / 0:00</span>
+                     </div>
+                     <audio loop id="audio" preload="auto"></audio>
+                  </div>
+               </div>
+
+               <div class="field">
+                  <label for="filePath">Ścieżka pliku <span class="opt">(trafi do komendy)</span></label>
+                  <input type="text" id="filePath" placeholder="np. nagranie.wav" autocomplete="off">
+                  <small>Wystarczy nazwa pliku — skrypt szuka w <code>wesola/sounds/raw/</code>. Pełna ścieżka też działa.</small>
+               </div>
+
+               <!-- 2. obszar -->
+               <div class="field">
+                  <label for="areaId">2. Obszar z mapy</label>
+                  <div class="area-row">
+                     <input type="number" id="areaId" min="1" step="1" placeholder="ID" inputmode="numeric">
+                     <span class="area-swatch" id="areaSwatch" aria-hidden="true"></span>
+                     <span id="areaLabel" class="subtle-info" style="margin:0"></span>
+                  </div>
+                  <small>Kliknij obszar na mapie albo wpisz jego ID.</small>
+               </div>
+
+               <!-- 3. nazwa -->
+               <div class="field">
+                  <label for="soundName">3. Nazwa dźwięku <span class="opt">(opcjonalnie)</span></label>
+                  <input type="text" id="soundName" autocomplete="off">
+                  <small>Gdy puste, użyję nazwy pliku.</small>
+               </div>
+
+               <!-- 4. autor -->
+               <div class="field">
+                  <label for="soundAuthor">4. Autor dźwięku</label>
+                  <input type="text" id="soundAuthor" autocomplete="off">
+               </div>
+
+               <p class="error" id="formError" role="alert"></p>
+
+               <div class="actions">
+                  <button type="submit" class="btn">Generuj komendę</button>
+                  <button type="reset" class="btn secondary" id="resetBtn">Wyczyść</button>
+               </div>
+            </form>
+
+            <div class="output" id="output">
+               <div class="field" style="margin-top: 28px;">
+                  <label for="commandOut">Komenda</label>
+                  <textarea id="commandOut" readonly rows="4"></textarea>
+                  <div class="actions" style="margin-top: 8px;">
+                     <button type="button" class="btn secondary" id="copyBtn">Kopiuj</button>
+                     <span class="subtle-info" id="copyMsg" style="margin:0"></span>
+                  </div>
+               </div>
+            </div>
+         </section>
+      </div>
+
+      <script>
+      (function () {
+         'use strict';
+
+         /* =====================================================================
+          * Komenda → add_sound.py (z katalogu głównego repo):
+          *   python3 wesola/add_sound.py <sciezka> <id> <autor> <tytul>
+          * data = {
+          *   path:   ścieżka pliku z pola formularza (string),
+          *   file:   nazwa wybranego pliku, np. "nagranie.wav",
+          *   area:   ID obszaru (number),
+          *   name:   nazwa dźwięku (pusta nazwa → nazwa pliku bez rozszerzenia),
+          *   author: autor (string)
+          * }
+          * ===================================================================== */
+         function shellQuote(s) {            // bezpieczne cytowanie dla bash/zsh
+            return "'" + String(s).replace(/'/g, "'\\''") + "'";
+         }
+
+         function buildCommand(data) {
+            // Uruchamiaj z katalogu głównego repozytorium:
+            // python3 wesola/add_sound.py <sciezka_audio> <id_obszaru> <autor> <tytul>
+            return [
+               'python3', 'wesola/add_sound.py',
+               shellQuote(data.path),
+               data.area,
+               shellQuote(data.author),
+               shellQuote(data.name)
+            ].join(' ');
+         }
+
+         /* ---------- elementy ---------- */
+         var $ = function (id) { return document.getElementById(id); };
+         var form = $('soundForm'), fileInput = $('audioFile'), pathInput = $('filePath'),
+             areaInput = $('areaId'), nameInput = $('soundName'), authorInput = $('soundAuthor'),
+             errorEl = $('formError'), outBox = $('output'), outArea = $('commandOut'),
+             areaLabel = $('areaLabel'), areaSwatch = $('areaSwatch'), mapHint = $('mapHint');
+
+         var svg = null, selectedId = null, maxArea = 0;
+
+         /* =====================================================================
+          * MAPA
+          * ===================================================================== */
+         function pieceId(g) { return parseInt(g.id.replace('layer-piece-', ''), 10); }
+
+         function pieceColor(g) {
+            var p = g.querySelector('path[fill]');
+            return p ? p.getAttribute('fill') : 'transparent';
+         }
+
+         function selectArea(id, fromMap) {
+            if (!svg) { return; }
+            var prev = svg.querySelector('.area-selected');
+            if (prev) { prev.classList.remove('area-selected'); }
+            var g = id ? svg.getElementById('layer-piece-' + id) || svg.querySelector('#layer-piece-' + id) : null;
+            if (!g) {
+               selectedId = null;
+               svg.classList.remove('has-selection');
+               areaSwatch.style.background = 'transparent';
+               areaLabel.textContent = '';
+               if (fromMap !== true && areaInput.value !== '') {
+                  areaLabel.textContent = 'nie ma takiego obszaru (1–' + maxArea + ')';
+               }
+               return;
+            }
+            selectedId = id;
+            g.classList.add('area-selected');
+            svg.classList.add('has-selection');
+            areaSwatch.style.background = pieceColor(g);
+            areaLabel.textContent = 'obszar ' + id;
+            if (fromMap) { areaInput.value = id; }
+         }
+
+         function wireMap() {
+            var pieces = svg.querySelectorAll('g[id^="layer-piece-"]');
+            maxArea = 0;
+            pieces.forEach(function (g) {
+               var id = pieceId(g);
+               if (id > maxArea) { maxArea = id; }
+               g.setAttribute('tabindex', '0');
+               g.setAttribute('role', 'button');
+               g.setAttribute('aria-label', 'Obszar ' + id);
+            });
+            areaInput.max = maxArea;
+
+            svg.addEventListener('click', function (e) {
+               var g = e.target.closest && e.target.closest('g[id^="layer-piece-"]');
+               if (g) { selectArea(pieceId(g), true); clearError(); }
+            });
+            svg.addEventListener('keydown', function (e) {
+               if (e.key !== 'Enter' && e.key !== ' ') { return; }
+               var g = e.target.closest && e.target.closest('g[id^="layer-piece-"]');
+               if (g) { e.preventDefault(); selectArea(pieceId(g), true); clearError(); }
+            });
+            svg.addEventListener('mouseover', function (e) {
+               var g = e.target.closest && e.target.closest('g[id^="layer-piece-"]');
+               mapHint.textContent = g ? 'Obszar ' + pieceId(g) : 'Kliknij obszar na mapie, aby go wybrać';
+            });
+            svg.addEventListener('mouseleave', function () {
+               mapHint.textContent = selectedId ? 'Wybrany obszar: ' + selectedId : 'Kliknij obszar na mapie, aby go wybrać';
+            });
+
+            if (areaInput.value) { selectArea(parseInt(areaInput.value, 10), false); }
+         }
+
+         function loadSvg() {
+            var container = $('svgContainer');
+            fetch('maps/wesola_areas_preview.svg')
+               .then(function (r) {
+                  if (!r.ok) { throw new Error('HTTP ' + r.status); }
+                  return r.text();
+               })
+               .then(function (text) {
+                  container.innerHTML = text;
+                  svg = container.querySelector('svg');
+                  if (!svg) { throw new Error('no svg'); }
+                  svg.id = 'svgmap';
+                  svg.removeAttribute('width');          // skalowanie przez CSS, viewBox zostaje
+                  svg.removeAttribute('height');
+                  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                  wireMap();
+               })
+               .catch(function () {
+                  container.innerHTML = '<p class="svg-missing">Nie mogę wczytać <code>wesola_areas_preview.svg</code>. ' +
+                     'Otwórz stronę przez serwer HTTP (np. <code>python -m http.server</code>), a nie z file://. ' +
+                     'Obszar nadal można podać przez ID.</p>';
+               });
+         }
+
+         areaInput.addEventListener('input', function () {
+            var v = parseInt(areaInput.value, 10);
+            selectArea(isNaN(v) ? null : v, false);
+            clearError();
+         });
+
+         /* =====================================================================
+          * ODTWARZACZ + WAVEFORM
+          * ===================================================================== */
+         var audio = $('audio'), player = $('player'), canvas = $('waveCanvas'),
+             waveWrap = $('waveWrap'), waveStatus = $('waveStatus'),
+             playBtn = $('playBtn'), timeLabel = $('timeLabel');
+         var objectUrl = null, peaks = null, raf = null;
+         var PEAK_BUCKETS = 1200;
+
+         function fmt(t) {
+            if (!isFinite(t)) { t = 0; }
+            var m = Math.floor(t / 60), s = Math.floor(t % 60);
+            return m + ':' + (s < 10 ? '0' : '') + s;
+         }
+
+         function cssVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+         }
+
+         function computePeaks(buffer) {
+            var ch = buffer.numberOfChannels, len = buffer.length;
+            var block = Math.max(1, Math.floor(len / PEAK_BUCKETS));
+            var out = new Float32Array(PEAK_BUCKETS);
+            for (var c = 0; c < ch; c++) {
+               var data = buffer.getChannelData(c);
+               for (var i = 0; i < PEAK_BUCKETS; i++) {
+                  var start = i * block, end = Math.min(len, start + block), max = 0;
+                  for (var j = start; j < end; j++) {
+                     var v = Math.abs(data[j]);
+                     if (v > max) { max = v; }
+                  }
+                  if (max > out[i]) { out[i] = max; }
+               }
+            }
+            var top = 0;
+            for (var k = 0; k < out.length; k++) { if (out[k] > top) { top = out[k]; } }
+            if (top > 0) { for (var n = 0; n < out.length; n++) { out[n] /= top; } }
+            return out;
+         }
+
+         function drawWave() {
+            var dpr = window.devicePixelRatio || 1;
+            var w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+            var h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+            if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, w, h);
+            if (!peaks) { return; }
+
+            var progress = audio.duration ? audio.currentTime / audio.duration : 0;
+            var barW = Math.max(1, Math.floor(2 * dpr)), gap = Math.max(1, Math.floor(1 * dpr));
+            var step = barW + gap, bars = Math.floor(w / step);
+            var mid = h / 2;
+            var played = cssVar('--wesola-accent-deep') || '#1a6b54';
+            var rest = cssVar('--wesola-accent-bright') || '#3ecf9a';
+
+            for (var b = 0; b < bars; b++) {
+               var from = Math.floor(b / bars * peaks.length);
+               var to = Math.max(from + 1, Math.floor((b + 1) / bars * peaks.length));
+               var m = 0;
+               for (var i = from; i < to; i++) { if (peaks[i] > m) { m = peaks[i]; } }
+               var bh = Math.max(2 * dpr, m * (h - 8 * dpr));
+               ctx.fillStyle = (b / bars) <= progress ? played : rest;
+               ctx.fillRect(b * step, mid - bh / 2, barW, bh);
+            }
+            // playhead
+            var x = Math.round(progress * w);
+            ctx.fillStyle = cssVar('--wesola-ink') || '#1a3d34';
+            ctx.fillRect(Math.min(x, w - dpr), 0, Math.max(1, dpr), h);
+         }
+
+         function updateTime() {
+            timeLabel.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+         }
+
+         function tick() {
+            drawWave(); updateTime();
+            if (!audio.paused) { raf = requestAnimationFrame(tick); }
+         }
+
+         function resetPlayer() {
+            audio.pause();
+            if (raf) { cancelAnimationFrame(raf); raf = null; }
+            if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
+            audio.removeAttribute('src'); audio.load();
+            peaks = null;
+            player.classList.remove('visible');
+            playBtn.textContent = '▶ Odtwórz';
+            timeLabel.textContent = '0:00 / 0:00';
+            waveStatus.textContent = '';
+         }
+
+         async function loadFile(file) {
+            resetPlayer();
+            if (!file) { return; }
+            objectUrl = URL.createObjectURL(file);
+            audio.src = objectUrl;
+            player.classList.add('visible');
+            waveStatus.textContent = 'Wczytuję waveform…';
+            drawWave();
+            try {
+               var AC = window.AudioContext || window.webkitAudioContext;
+               var ctx = new AC();
+               var buf = await ctx.decodeAudioData(await file.arrayBuffer());
+               ctx.close();
+               if (file !== fileInput.files[0]) { return; }   // użytkownik zmienił plik w trakcie
+               peaks = computePeaks(buf);
+               waveStatus.textContent = '';
+            } catch (err) {
+               waveStatus.textContent = 'Nie udało się narysować waveformu (odtwarzanie nadal działa).';
+            }
+            drawWave(); updateTime();
+         }
+
+         playBtn.addEventListener('click', function () {
+            if (audio.paused) { audio.play(); } else { audio.pause(); }
+         });
+         audio.addEventListener('play', function () {
+            playBtn.textContent = '⏸ Pauza';
+            if (!raf) { raf = requestAnimationFrame(function loop() { raf = null; tick(); }); }
+         });
+         audio.addEventListener('pause', function () { playBtn.textContent = '▶ Odtwórz'; drawWave(); updateTime(); });
+         audio.addEventListener('ended', function () { audio.currentTime = 0; playBtn.textContent = '▶ Odtwórz'; drawWave(); updateTime(); });
+         audio.addEventListener('loadedmetadata', updateTime);
+         audio.addEventListener('seeked', function () { drawWave(); updateTime(); });
+
+         function seekFromEvent(e) {
+            if (!audio.duration) { return; }
+            var r = waveWrap.getBoundingClientRect();
+            var ratio = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+            audio.currentTime = ratio * audio.duration;
+         }
+         var scrubbing = false;
+         waveWrap.addEventListener('pointerdown', function (e) { scrubbing = true; waveWrap.setPointerCapture(e.pointerId); seekFromEvent(e); });
+         waveWrap.addEventListener('pointermove', function (e) { if (scrubbing) { seekFromEvent(e); } });
+         waveWrap.addEventListener('pointerup', function () { scrubbing = false; });
+         window.addEventListener('resize', drawWave);
+
+         fileInput.addEventListener('change', function () {
+            var f = fileInput.files[0];
+            pathInput.value = f ? f.name : '';
+            loadFile(f);
+            clearError();
+         });
+
+         /* =====================================================================
+          * FORMULARZ
+          * ===================================================================== */
+         function clearError() { errorEl.textContent = ''; }
+
+         function stripExt(n) { return n.replace(/\.[^.\/\\]+$/, ''); }
+
+         form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            var file = fileInput.files[0];
+            var path = pathInput.value.trim();
+            var area = parseInt(areaInput.value, 10);
+            var author = authorInput.value.trim();
+
+            if (!file && !path) { return fail('Wybierz plik z dźwiękiem.', fileInput); }
+            if (isNaN(area) || (svg && !svg.querySelector('#layer-piece-' + area))) {
+               return fail('Wybierz obszar na mapie lub wpisz poprawne ID' + (maxArea ? ' (1–' + maxArea + ')' : '') + '.', areaInput);
+            }
+            if (!author) { return fail('Podaj autora dźwięku.', authorInput); }
+
+            var fileName = file ? file.name : path.split(/[\\\/]/).pop();
+            var name = nameInput.value.trim() || stripExt(fileName);
+
+            outArea.value = buildCommand({
+               path: path || fileName, file: fileName, area: area, name: name, author: author
+            });
+            outBox.classList.add('visible');
+            $('copyMsg').textContent = '';
+         });
+
+         function fail(msg, el) {
+            errorEl.textContent = msg;
+            outBox.classList.remove('visible');
+            if (el) { el.focus(); }
+         }
+
+         form.addEventListener('reset', function () {
+            resetPlayer();
+            selectArea(null, true);
+            outBox.classList.remove('visible');
+            clearError();
+            areaLabel.textContent = '';
+         });
+
+         $('copyBtn').addEventListener('click', function () {
+            var done = function () { $('copyMsg').textContent = 'Skopiowano!'; };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+               navigator.clipboard.writeText(outArea.value).then(done, function () { outArea.select(); document.execCommand('copy'); done(); });
+            } else { outArea.select(); document.execCommand('copy'); done(); }
+         });
+
+         loadSvg();
+      })();
+      </script>
+   </body>
+</html>

@@ -31,6 +31,14 @@ AUDIO_EXT = ".wav"
 SOUNDS_DATA: dict[int, list[str]] = {
     # Example:
     # 1: ["Ania", "ptaki nad torami"],
+    4: ["ehh hahah", "Przystanek Tauron Arena Wieczysta"],
+    125: ["ehh hahah", "Klakson z Warszawy"],
+    58: ["ehh hahah", "Wróbelki z Wrocławia"],
+
+}
+
+# Override when files are not .wav (default matches ``AUDIO_EXT``).
+SOUND_EXT: dict[int, str] = {
 }
 
 HELPERS_DIR = Path(__file__).resolve().parent
@@ -41,8 +49,12 @@ CREDITS_TABLE_PATH = HELPERS_DIR / "credits_table.html"
 PIECE_ID_RE = re.compile(r'id="layer-piece-(\d+)"')
 
 
+def file_ext(sound_id: int) -> str:
+    return SOUND_EXT.get(sound_id, AUDIO_EXT)
+
+
 def sound_url(sound_id: int) -> str:
-    return f"{DEPLOY_ORIGIN}/{MAP_PREFIX}sounds/{sound_id}{AUDIO_EXT}"
+    return f"{DEPLOY_ORIGIN}/{MAP_PREFIX}sounds/{sound_id}{file_ext(sound_id)}"
 
 
 def piece_ids_from_svg(svg_path: Path) -> list[int]:

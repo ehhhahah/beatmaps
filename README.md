@@ -18,7 +18,7 @@ Workshops are run by [Joanna Wabik](https://yoxoko.wordpress.com/) and [ehh haha
 | Map | When | Notes |
 |-----|------|--------|
 | [BeatMap 1: Nowa Huta, Kraków](./nowa-huta/) | July 2022 | Zoom / sound-morph slider |
-| [BeatMap 2: Wesoła](./wesola/) | October 2026 | No zoom slider; mint / green |
+| [BeatMap 2: Wesoła](./wesola/) | October 2026 | Zoom slider (mint / green) |
 
 ## Tech (short version)
 
