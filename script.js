@@ -5,7 +5,10 @@ let audioCtx;
 class SeamlessAudio {
     constructor(src) {
         this.src = src;
-        this.audioElement = new Audio(src); // Awaryjny odtwarzacz
+        // Tworzymy Audio, ale NIE podajemy mu jeszcze ścieżki (src). 
+        // Zapobiega to wysyłaniu konfliktowych zapytań Range przez przeglądarkę.
+        // 416 (Requested Range Not Satisfiable)
+        this.audioElement = new Audio(); 
         this.useWebAudio = !!WebAudioContext;
         this.gainNode = null;
         this.sourceNode = null;
@@ -22,12 +25,12 @@ class SeamlessAudio {
                 }
                 if (audioCtx.state === 'suspended') {
                     await audioCtx.resume();
-                }
+                }                
                 
                 // Pobieranie i dekodowanie pliku (tylko raz)
                 if (!this.audioBuffer) {
                     const response = await fetch(this.src);
-                    if (!response.ok) throw new Error("Błąd pobierania pliku: " + this.src);
+                    if (!response.ok) throw new Error("Błąd pobierania pliku: " + this.src + response.status);
                     const arrayBuffer = await response.arrayBuffer();
                     this.audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
                 }
@@ -48,11 +51,20 @@ class SeamlessAudio {
             } catch (e) {
                 console.warn("Używam standardowego tagu <audio>. Powód:", e.message);
                 this.useWebAudio = false;
+                
+                // Przypisujemy src do fallbacku dopiero, gdy Web Audio API zawiedzie
+                if (!this.audioElement.src) {
+                    this.audioElement.src = this.src;
+                }
+                
                 this.audioElement.loop = true;
                 this.audioElement.volume = this._volume;
                 this.audioElement.play();
             }
         } else {
+            if (!this.audioElement.src) {
+                this.audioElement.src = this.src;
+            }
             this.audioElement.loop = true;
             this.audioElement.volume = this._volume;
             this.audioElement.play();

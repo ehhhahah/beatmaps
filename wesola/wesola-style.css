@@ -41,7 +41,7 @@ a:hover {
 .puzzle {
     background-color: black;
     color: white;
-    fill: var(--wesola-ink);
+    fill: var(--wesola-accent);
     text-align: center;
     text-justify: auto;
     cursor: pointer;
@@ -75,7 +75,7 @@ g {
     margin: 2rem auto;
     max-width: 28rem;
     padding: 1.5rem;
-    color: var(--wesola-ink);
+    color: var(--wesola-accent);
     opacity: 0.7;
     font-style: italic;
 }
