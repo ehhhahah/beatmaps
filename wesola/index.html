@@ -84,7 +84,8 @@
          var root = wesolaSoundsRoot();
          var ext = wesolaFileExt(soundId);
          var near = new URL(String(soundId) + ext, root).href;
-         var far = new URL(String(soundId) + '_mod' + ext, root).href;
+         // Same as near, since Wesola has no zoom crossfade.
+         var far = new URL(String(soundId) + ext, root).href;
          ALL_AUDIOS[soundId] = {
             id: soundId,
             audio: [new Audio(near), new Audio(far)],
@@ -99,13 +100,6 @@
       }
 
       function wireWesolaPieces(svg) {
-         var decorative = svg.querySelectorAll(
-            '#layer-small, #layer-network-roads, #layer-network-trains, #layer-guide-rail-band'
-         );
-         for (var d = 0; d < decorative.length; d++) {
-            decorative[d].style.pointerEvents = 'none';
-         }
-
          var pieces = svg.querySelectorAll('g[id^="layer-piece-"]');
          for (var i = 0; i < pieces.length; i++) {
             var g = pieces[i];
