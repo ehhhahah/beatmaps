@@ -48,6 +48,7 @@ Preview URLs in generated HTML use `https://beatmaps.pages.dev/wesola/sounds/{id
 - [`layer_by_size.py`](layer_by_size.py) — initial Inkscape layer split by path size.
 - [`refine_layers.py`](refine_layers.py) — absorb flecks, optional road/rail clip (see script docstring).
 - [`area_regroup.py`](area_regroup.py) — regroup geometry into `layer-piece-*` by the `obszary` guide from `wesola_obszared.svg` (`preview` → `wesola_areas_preview.svg`, `build` → live `wesola_layered.svg`; tuning constants and review overrides at the top of the script).
+- [`apply_cuts.py`](apply_cuts.py) — split road pieces along the Inkscape `CUTS` layer in `wesola_layered-CUTS.svg` with a hairline seam (~0.05 px, abutting like existing area joins), renumber `1..N`, write `wesola_final_map.svg` + overwrite `wesola_areas_preview.svg` (labels are sequential ids only).
 
 ## Nowa Huta equivalent
 
