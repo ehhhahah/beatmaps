@@ -124,7 +124,7 @@ body.wesola-beatmap input[type=range]::-moz-range-thumb {
 }
 
 
-@media (min-width: 900px) {
+@media (min-aspect-ratio: 1/1) {
     #svgmap {
         width: min(1200px, 100%) !important;
         height: auto !important;
