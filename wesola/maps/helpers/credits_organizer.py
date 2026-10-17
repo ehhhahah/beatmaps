@@ -36,6 +36,8 @@ SOUNDS_DATA: dict[int, list[str]] = {
     58: ["ehh hahah", "Wróbelki z Wrocławia"],
     110: ["Joanna Wabik", "Reflectere Piano"],
     49: ["Mikołaj", "Liście"],
+    50: ["Mikołaj", "Rura"],
+    11: ["Mikołaj", "mikolaj_rytm_kroki"],
 
 }
 
