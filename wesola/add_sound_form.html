@@ -188,13 +188,12 @@
             <div class="svgContainer" id="svgContainer">
                <p class="svg-loading">Loading map…</p>
             </div>
-            <p class="map-hint" id="mapHint">Kliknij obszar na mapie, aby go wybrać</p>
          </section>
 
          <!-- PRAWA POŁOWA: formularz -->
          <section class="form-pane">
             <h1 class="title"><a href="../" style="text-decoration: none">BeatMap 2: Wesoła</a> — dodaj dźwięk</h1>
-            <p class="subtle-info">Wypełnij formularz, a strona wygeneruje komendę.</p>
+            <p class="subtle-info">Wypełnij formularz, a strona wygeneruje komendę do dodania dźwięku.</p>
 
             <form id="soundForm" novalidate>
 
@@ -217,9 +216,9 @@
                </div>
 
                <div class="field">
-                  <label for="filePath">Ścieżka pliku <span class="opt">(trafi do komendy)</span></label>
+                  <label for="filePath">Ścieżka pliku</label>
                   <input type="text" id="filePath" placeholder="np. nagranie.wav" autocomplete="off">
-                  <small>Wystarczy nazwa pliku — skrypt szuka w <code>wesola/sounds/raw/</code>. Pełna ścieżka też działa.</small>
+                  <small>Plik powinien być w <code>wesola/sounds/raw/</code>.</small>
                </div>
 
                <!-- 2. obszar -->
@@ -250,7 +249,6 @@
 
                <div class="actions">
                   <button type="submit" class="btn">Generuj komendę</button>
-                  <button type="reset" class="btn secondary" id="resetBtn">Wyczyść</button>
                </div>
             </form>
 
