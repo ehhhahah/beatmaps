@@ -51,7 +51,7 @@ def _upsert_sounds_data(sound_id: int, author: str, title: str) -> None:
 
 
 def _upsert_dict_entry(path: Path, dict_name: str, sound_id: int, value_code: str | None) -> None:
-    """Insert/replace ``sound_id: value_code`` inside ``dict_name = {...}``, or remove if value_code is None."""
+    """Insert/replace ``sound_id: value_code`` inside ``dict_name = {...}``, or remove if value_code is Nopython3 wesola/add_sound.py 'zosia25.wav' 16 'Zosia Bućko-Szczudło' 'zosia25'ne."""
     text = path.read_text(encoding="utf-8")
     m = re.search(
         rf"({dict_name}\s*:[^=\n]+=\s*\{{)(.*?)(\n\}})",
