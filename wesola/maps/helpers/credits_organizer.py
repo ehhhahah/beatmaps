@@ -75,7 +75,8 @@ SOUNDS_DATA: dict[int, list[str]] = {
     33: ["Zosia Bućko-Szczudło", "zosia28"],
     23: ["Zosia Bućko-Szczudło", "zosia29"],
     1: ["Mikołaj", "mikolaj12"],
-    13: ["Mikołaj", "zosia29"],
+    13: ["Mikołaj", "mikolaj13"],
+    48: ["Zosia Bućko-Szczudło", "zosia30"],
 
 }
 
